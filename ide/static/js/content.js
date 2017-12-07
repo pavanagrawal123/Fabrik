@@ -232,8 +232,8 @@ class Content extends React.Component {
           this.setState({ load: false });
         }.bind(this),
         error : function () {
-       	  this.setState({ load: false });
-	  this.addError("Error");
+          this.setState({ load: false });
+          this.addError("Error");
         }.bind(this)
       });
     }
