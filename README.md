@@ -55,7 +55,7 @@ This app is presently under active development and we welcome contributions. Ple
 5. [Install postgres >= 9.5](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-postgresql-on-ubuntu-16-04)
 * Setup postgres database
     * Start postgresql by typing ```sudo service postgresql start```
-    * Now login as user postgres by running ```sudo -i -u postgres psql``` and type the commands below
+    * Now login as user postgres by running ```sudo -u postgres psql``` and type the commands below
     
     ```
       CREATE DATABASE fabrik;
