@@ -27,9 +27,10 @@ class Pane extends React.Component {
         <div className="panel-group" id="menu" role="tablist" aria-multiselectable="true">
               <div className="panel panel-default">
                 <div className="panel-heading" role="tab">
+                    
+                    <a data-toggle="collapse" data-parent="#menu" href="#data" aria-expanded="false" aria-controls="data">
                     <span className="badge sidebar-badge" id="dataLayers"> </span>
                       Data
-                    <a data-toggle="collapse" data-parent="#menu" href="#data" aria-expanded="false" aria-controls="data">
                       <span className={this.state.data ? 'glyphicon sidebar-dropdown glyphicon-menu-down': 
                       'glyphicon sidebar-dropdown glyphicon-menu-right'} onClick={() => this.toggleClass('data')}></span>
                     </a>
