@@ -124,6 +124,9 @@ body {
   background-color: transparent;
   box-shadow: none;
 }
+.panel-heading > a:hover {
+  text-decoration: none;
+}
 
 .panel-group{
   padding-left: 8px;
