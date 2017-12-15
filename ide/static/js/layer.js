@@ -7,6 +7,7 @@ class Layer extends React.Component {
       data[this.props.type].endpoint.src,
       data[this.props.type].endpoint.trg
     );
+    console.log("yello");
   }
   componentWillUnmount() {
     instance.deleteEndpoint(`${this.props.id}-s0`);
@@ -27,6 +28,7 @@ class Layer extends React.Component {
         onMouseEnter={(event) => this.props.hover(event, this.props.id)}
         data-tip='tooltip'
         data-for='getContent'
+        extend={this.props.extend}
       >
         {data[this.props.type].name}
       </div>
@@ -41,7 +43,8 @@ Layer.propTypes = {
   left: React.PropTypes.string.isRequired,
   class: React.PropTypes.string,
   click: React.PropTypes.func,
-  hover: React.PropTypes.func
+  hover: React.PropTypes.func,
+  extend: React.PropTypes.string
 };
 
 export default Layer;

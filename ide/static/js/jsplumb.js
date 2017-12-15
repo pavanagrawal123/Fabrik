@@ -1,5 +1,6 @@
 export default function () {
   let ArrowConnector = function(params) {
+    console.log(params.waveLength);
   params = params || { dx: 20, dy: 20 };
   let _super =  jsPlumb.Connectors.AbstractConnector.apply(this, arguments);
   this.type = "ArrowConnector";
@@ -25,21 +26,26 @@ export default function () {
     } else {
       if (paintInfo.ty-paintInfo.sy > 40) {
         var extend = Math.sqrt(paintInfo.ty-paintInfo.sy / 80) + 70;
+        if (extend > 200) {
+          extend /=2;
+        }
+        console.log("helloooooooo");
+        console.log(params);
       _super.addSegment(this, "Straight", {
         x1:paintInfo.sx,
         y1:paintInfo.sy,
         x2:paintInfo.sx - extend,
-        y2:paintInfo.sy
+        y2:paintInfo.sy + 40
       });
       _super.addSegment(this, "Straight", {
         x1:paintInfo.sx - extend,
-        y1:paintInfo.sy,
+        y1:paintInfo.sy + 40 ,
         x2:paintInfo.sx - extend,
-        y2:paintInfo.ty
+        y2:paintInfo.ty - 40
       });
       _super.addSegment(this, "Straight", {
         x1:paintInfo.sx - extend,
-        y1:paintInfo.ty,
+        y1:paintInfo.ty - 40 ,
         x2:paintInfo.tx,
         y2:paintInfo.ty
       });
