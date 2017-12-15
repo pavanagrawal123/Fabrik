@@ -46,7 +46,8 @@ class Canvas extends React.Component {
             if ((net[outputId].info.phase === this.props.selectedPhase) || (net[outputId].info.phase === null)) {
               instance.connect({
                 uuids: [`${inputId}-s0`, `${outputId}-t0`],
-                editable: true
+                editable: true,
+                connector: ["ArrowConnector", {test : 5}]
               });
               /* The following code is to identify layers that are part of a group
               and modify their border radius */

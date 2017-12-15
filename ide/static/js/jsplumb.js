@@ -1,5 +1,6 @@
 export default function () {
   let ArrowConnector = function(params) {
+  console.log(params.test);
   params = params || { dx: 20, dy: 20 };
   let _super =  jsPlumb.Connectors.AbstractConnector.apply(this, arguments);
   this.type = "ArrowConnector";
