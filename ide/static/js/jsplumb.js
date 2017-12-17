@@ -29,17 +29,17 @@ export default function () {
         x1:paintInfo.sx,
         y1:paintInfo.sy,
         x2:paintInfo.sx - extend,
-        y2:paintInfo.sy
+        y2:paintInfo.sy +40
       });
       _super.addSegment(this, "Straight", {
         x1:paintInfo.sx - extend,
-        y1:paintInfo.sy,
+        y1:paintInfo.sy +40,
         x2:paintInfo.sx - extend,
-        y2:paintInfo.ty
+        y2:paintInfo.ty -40
       });
       _super.addSegment(this, "Straight", {
         x1:paintInfo.sx - extend,
-        y1:paintInfo.ty,
+        y1:paintInfo.ty-40,
         x2:paintInfo.tx,
         y2:paintInfo.ty
       });
