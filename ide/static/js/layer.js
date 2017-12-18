@@ -7,7 +7,6 @@ class Layer extends React.Component {
       data[this.props.type].endpoint.src,
       data[this.props.type].endpoint.trg
     );
-    console.log("yello");
   }
   componentWillUnmount() {
     instance.deleteEndpoint(`${this.props.id}-s0`);

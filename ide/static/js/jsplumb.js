@@ -1,13 +1,12 @@
 export default function () {
   let ArrowConnector = function(params) {
-    console.log(params.waveLength);
   params = params || { dx: 20, dy: 20 };
   let _super =  jsPlumb.Connectors.AbstractConnector.apply(this, arguments);
   this.type = "ArrowConnector";
   let dy = params.y || 20;
 
   this._compute = function(paintInfo, paintParams) {
-
+    console.log("redraw");
     if(paintParams.targetEndpoint.isTarget && 
       ((paintParams.targetEndpoint.element.attributes['data-type'].nodeValue === 'Concat') ||
        (paintParams.targetEndpoint.element.attributes['data-type'].nodeValue === 'Eltwise'))){
@@ -24,13 +23,12 @@ export default function () {
         y2:paintInfo.ty
       })
     } else {
-      if (paintInfo.ty-paintInfo.sy > 40) {
-        var extend = Math.sqrt(paintInfo.ty-paintInfo.sy / 80) + 70;
+      if (window.connectorParams[paintParams.sourceEndpoint.elementId][paintParams.targetEndpoint.elementId] != 0 && !(window.connectorParams[paintParams.sourceEndpoint.elementId][paintParams.targetEndpoint.elementId] == undefined)) {
+        console.log(window.connectorParams[paintParams.sourceEndpoint.elementId][paintParams.targetEndpoint.elementId]);
+        var extend = window.connectorParams[paintParams.sourceEndpoint.elementId][paintParams.targetEndpoint.elementId];
         if (extend > 200) {
           extend /=2;
         }
-        console.log("helloooooooo");
-        console.log(params);
       _super.addSegment(this, "Straight", {
         x1:paintInfo.sx,
         y1:paintInfo.sy,

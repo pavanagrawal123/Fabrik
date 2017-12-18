@@ -36,6 +36,7 @@ class Canvas extends React.Component {
       }
     );
     if (this.props.rebuildNet) {
+      console.log("rebuild");
       const net = this.props.net;
       let combined_layers = ['ReLU', 'LRN', 'TanH', 'BatchNorm', 'Dropout', 'Scale'];
       Object.keys(net).forEach(inputId => {
@@ -59,20 +60,34 @@ class Canvas extends React.Component {
                 var x = net[checkingNet]['state']['left'].substring(0, net[checkingNet]['state']['left'].length -2);
                 
                 var xcalc = ((y - pos[1][1]) / slope) + pos[1][0];
-                if (Math.abs(x - xcalc) < 80) {
-                  var extend = true;
+                if (Math.abs(x - xcalc) < 110) {
+                  var extend = x-xcalc;
+                  if ( extend < 0) {
+                    extend = -80;
+                  }
+                  else {
+                    extend = 80;
+                  }
                 console.log({inputId, outputId, checkingNet});
-                console.log(x-xcalc);
+                console.log(extend);
+                break;
+                }
+                else {
+                  var extend = 0;
                 }
                
                 }
             }
             }
             if ((net[outputId].info.phase === this.props.selectedPhase) || (net[outputId].info.phase === null)) {
+              window.connectorParams = window.connectorParams || {};
+              window.connectorParams[inputId] = window.connectorParams[inputId] || {};
+              //if (Math.abs(window.connectorParams[inputId][outputId]) < Math.abs(extend)) {
+             window.connectorParams[inputId][outputId] = extend;
+              //}
               instance.connect({
                 uuids: [`${inputId}-s0`, `${outputId}-t0`],
                 editable: true,
-                connector: ["arrowConector", { waveLength : 23}]
               });
               /* The following code is to identify layers that are part of a group
               and modify their border radius */
@@ -135,6 +150,59 @@ class Canvas extends React.Component {
     layer.state.left = `${event.pos['0']}px`;
     layer.state.top = `${event.pos['1']}px`;
     this.props.modifyLayer(layer, layerId);
+    let net = this.props.net
+    Object.keys(net).forEach(inputId => {
+      const layer = net[inputId];
+      if ((layer.info.phase === this.props.selectedPhase) || (layer.info.phase === null)) {
+        const outputs = layer.connection.output;
+        outputs.forEach(outputId => {
+          if (outputId != "l1" && typeof net[outputId]['state']['left'] != "undefined"){
+            var pos = [ [net[outputId]['state']['left'], net[outputId]['state']['top']],[layer['state']['left'], layer['state']['top']]]
+            Object.keys(pos).forEach(function(row) {
+              Object.keys(pos[row]).forEach(function(coord) {
+                pos[row][coord] = parseInt(pos[row][coord].substring(0, pos[row][coord].length -2));
+              });
+              
+            });
+            var slope = (pos[0][1] - pos[1][1]) / (pos[0][0] - pos[1][0] + 1);
+            for ( let i = parseInt(inputId.substring(1)) + 1; i < parseInt(outputId.substring(1)); i++) {
+              var checkingNet = "l" + i;
+              if ((net[checkingNet].info.phase === this.props.selectedPhase) || (net[checkingNet].info.phase === null)) {
+              var y = net[checkingNet]['state']['top'].substring(0, net[checkingNet]['state']['top'].length -2);
+              var x = net[checkingNet]['state']['left'].substring(0, net[checkingNet]['state']['left'].length -2);
+              
+              var xcalc = ((y - pos[1][1]) / slope) + pos[1][0];
+              if (Math.abs(x - xcalc) < 110) {
+                var extend = x-xcalc;
+                if ( extend < 0) {
+                  extend = -80;
+                }
+                else {
+                  extend = 80;
+                }
+              console.log({inputId, outputId, checkingNet});
+              console.log(extend);
+              break;
+              }
+              else {
+                
+                var extend = 0;
+              }
+             
+              }
+          }
+          }
+          if ((net[outputId].info.phase === this.props.selectedPhase) || (net[outputId].info.phase === null)) {
+            window.connectorParams = window.connectorParams || {};
+            window.connectorParams[inputId] = window.connectorParams[inputId] || {};
+            
+            window.connectorParams[inputId][outputId] = extend;
+            
+          }
+        });
+      }
+    });
+    
   }
   connectionEvent(connInfo, originalEvent) {
     if (originalEvent != null) { // user manually makes a connection
