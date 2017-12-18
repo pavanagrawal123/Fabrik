@@ -124,10 +124,10 @@ body {
   background-color: transparent;
   box-shadow: none;
 }
-.panel-heading > a:hover {
+.panel-heading > a {
   text-decoration: none;
+  color: #455062;
 }
-
 .panel-group{
   padding-left: 8px;
   padding-right: 8px;
