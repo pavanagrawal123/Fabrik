@@ -291,10 +291,10 @@ class Content extends React.Component {
         }
         this.setState({ load: false });
       }.bind(this),
-      error() {
-        // console.log('failure');
+      error : function () {
         this.setState({ load: false });
-      }
+        this.addError("Error");
+      }.bind(this)
     });
   }
   initialiseImportedNet(net,net_name) {
