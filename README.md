@@ -72,6 +72,7 @@ This app is presently under active development and we welcome contributions. Ple
 6. Install node modules
 ```
 npm install
+sudo npm install -g webpack
 webpack --progress --watch --colors
 ```
 
