@@ -26,23 +26,21 @@ export default function () {
       if (window.connectorParams[paintParams.sourceEndpoint.elementId][paintParams.targetEndpoint.elementId] != 0 && !(window.connectorParams[paintParams.sourceEndpoint.elementId][paintParams.targetEndpoint.elementId] == undefined)) {
         console.log(window.connectorParams[paintParams.sourceEndpoint.elementId][paintParams.targetEndpoint.elementId]);
         var extend = window.connectorParams[paintParams.sourceEndpoint.elementId][paintParams.targetEndpoint.elementId];
-        if (extend > 200) {
-          extend /=2;
-        }
+      
       _super.addSegment(this, "Straight", {
         x1:paintInfo.sx,
         y1:paintInfo.sy,
-        x2:paintInfo.sx - extend,
+        x2:paintInfo.sx + extend,
         y2:paintInfo.sy + 40
       });
       _super.addSegment(this, "Straight", {
-        x1:paintInfo.sx - extend,
+        x1:paintInfo.sx + extend,
         y1:paintInfo.sy + 40 ,
-        x2:paintInfo.sx - extend,
+        x2:paintInfo.sx + extend,
         y2:paintInfo.ty - 40
       });
       _super.addSegment(this, "Straight", {
-        x1:paintInfo.sx - extend,
+        x1:paintInfo.sx + extend,
         y1:paintInfo.ty - 40 ,
         x2:paintInfo.tx,
         y2:paintInfo.ty
