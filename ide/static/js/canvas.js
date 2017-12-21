@@ -20,8 +20,10 @@ class Canvas extends React.Component {
     this.mouseState = null;
     this.placeholder = true;
   }
-  getBetween(net, output, input) {
+  getBetween(net, output, input, x) {
     var toReturn = [];
+    var neg = 0;
+    var pos = 0;
     Object.keys(net).forEach(node => {
       var pos = [[net[node]['state']['left'], net[node]['state']['top']]]
       Object.keys(pos).forEach(function (row) {
@@ -31,13 +33,19 @@ class Canvas extends React.Component {
       });
       if (input < pos[0][1] && pos[0][1] < output) {
         toReturn.push(node);
+        if (pos[0][0] > x) {neg++;} else{ pos++;}
       }
     });
-    return toReturn;
+    var dir = 0;
+    if (neg>pos) dir = -1; else dir = 1; 
+    return [dir, toReturn];
   }
   checkIfCuttingLine(net, pos) {
-    var slope = (pos[0][1] - pos[1][1]) / (pos[0][0] - pos[1][0] + 1);
-    var between = this.getBetween(net, pos[0][1], pos[1][1]);
+    var between = this.getBetween(net, pos[0][1], pos[1][1], pos[0][0]);
+    var dir = between[0];
+    between = between[1];
+    console.log(dir);
+    var slope = (pos[0][1] - pos[1][1]) / (pos[0][0] - pos[1][0] + dir);
     for (var i = 0; i < between.length; i++) {
       console.log("test");
       var checkingNet = between[i];
@@ -114,6 +122,7 @@ class Canvas extends React.Component {
     if (this.props.rebuildNet) {
       const net = this.props.net;
       let combined_layers = ['ReLU', 'LRN', 'TanH', 'BatchNorm', 'Dropout', 'Scale'];
+      
       this.checkCutting(net);
       Object.keys(net).forEach(inputId => {
         const layer = net[inputId];
