@@ -21,6 +21,9 @@ class Canvas extends React.Component {
     this.mouseState = null;
     this.placeholder = true;
   }
+  /* this function returns the layers between a specified output y and input y
+  it also sneaks in another functionallity of determining which direction is most crowded. this is specifically 
+  implemented in this function becuase performance will be very low if implemented in another loop.  */
   getBetween(net, output, input, x) {
     var toReturn = [];
     var neg = 0;
@@ -41,21 +44,26 @@ class Canvas extends React.Component {
     if (neg>pos) dir = -1; else dir = 1; 
     return [dir, toReturn];
   }
+  /* this function takes in a var of net and pos
+  net has an array of all the nodes, and pos is a array of x and y coordinates that this 
+  function checks to see whether a line will cut through nodes in the pathway.
+  */
   checkIfCuttingLine(net, pos) {
     var between = this.getBetween(net, pos[0][1], pos[1][1], pos[0][0]);
     var dir = between[0];
     between = between[1];
-
+    //slope is calculated for the line so it can form an equation for it.
     var slope = (pos[0][1] - pos[1][1]) / (pos[0][0] - pos[1][0] + dir);
     for (var i = 0; i < between.length; i++) {
       var checkingNet = between[i];
       if ((net[checkingNet].info.phase === this.props.selectedPhase) || (net[checkingNet].info.phase === null)) {
         var y = net[checkingNet]['state']['top'].substring(0, net[checkingNet]['state']['top'].length - 2);
         var x = net[checkingNet]['state']['left'].substring(0, net[checkingNet]['state']['left'].length - 2);
-
+        //point slope equation is used to form xcalc. xcalc is the position te line will be at for a specified y coord.
         var xcalc = ((y - pos[1][1]) / slope) + pos[1][0];
         if (Math.abs(x - xcalc) < 100) {
           var extend = x - xcalc;
+          //the following code is used for positioning the direction of the line and the while loop controling the function iteslf. 
           if (extend < 0) {
             return 1;
           }
@@ -67,6 +75,9 @@ class Canvas extends React.Component {
     }
     return 0;
   }
+  /* the following code combines the previous functions and loops through output and input nodes and does a checkIfCuttingLine
+  it while loops over checkcutting net untill the line is no longer cutting through a node. it could very possibly infinite, but
+  chances of that are very slim, as long as there is a little empty space on the canvas, the code should be fine.  */
   checkCutting(net) {
     Object.keys(net).forEach(inputId => {
       const input = net[inputId];
