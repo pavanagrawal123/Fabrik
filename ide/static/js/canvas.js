@@ -44,10 +44,9 @@ class Canvas extends React.Component {
     var between = this.getBetween(net, pos[0][1], pos[1][1], pos[0][0]);
     var dir = between[0];
     between = between[1];
-    console.log(dir);
+
     var slope = (pos[0][1] - pos[1][1]) / (pos[0][0] - pos[1][0] + dir);
     for (var i = 0; i < between.length; i++) {
-      console.log("test");
       var checkingNet = between[i];
       if ((net[checkingNet].info.phase === this.props.selectedPhase) || (net[checkingNet].info.phase === null)) {
         var y = net[checkingNet]['state']['top'].substring(0, net[checkingNet]['state']['top'].length - 2);
@@ -62,8 +61,6 @@ class Canvas extends React.Component {
           else {
             return -1;
           }
-          console.log({ inputId, outputId, checkingNet });
-          console.log(extend);
         }
       }
     }
@@ -85,7 +82,6 @@ class Canvas extends React.Component {
 
             });
             var extend = 0;
-            console.log("look here");
             var direction = this.checkIfCuttingLine(net,pos);
             while(this.checkIfCuttingLine(net,pos) != 0) {
               extend += 80*direction;
@@ -122,7 +118,6 @@ class Canvas extends React.Component {
     if (this.props.rebuildNet) {
       const net = this.props.net;
       let combined_layers = ['ReLU', 'LRN', 'TanH', 'BatchNorm', 'Dropout', 'Scale'];
-      
       this.checkCutting(net);
       Object.keys(net).forEach(inputId => {
         const layer = net[inputId];
@@ -132,7 +127,7 @@ class Canvas extends React.Component {
             if ((net[outputId].info.phase === this.props.selectedPhase) || (net[outputId].info.phase === null)) {
               instance.connect({
                 uuids: [`${inputId}-s0`, `${outputId}-t0`],
-                editable: true,
+                editable: true
               });
               /* The following code is to identify layers that are part of a group
               and modify their border radius */
@@ -324,11 +319,7 @@ class Canvas extends React.Component {
         }
 
       }
-      var extend = [];
       if ((layer.info.phase === this.props.selectedPhase) || (layer.info.phase === null)) {
-        layer['connection']['input'].forEach(layerInputId => {
-          
-        });
         layers.push(
           <Layer
             id={layerId}

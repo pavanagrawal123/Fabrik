@@ -6,7 +6,6 @@ export default function () {
   let dy = params.y || 20;
 
   this._compute = function(paintInfo, paintParams) {
-    console.log("redraw");
     if(paintParams.targetEndpoint.isTarget && 
       ((paintParams.targetEndpoint.element.attributes['data-type'].nodeValue === 'Concat') ||
        (paintParams.targetEndpoint.element.attributes['data-type'].nodeValue === 'Eltwise'))){
@@ -24,7 +23,6 @@ export default function () {
       })
     } else {
       if (window.connectorParams[paintParams.sourceEndpoint.elementId][paintParams.targetEndpoint.elementId] != 0 && !(window.connectorParams[paintParams.sourceEndpoint.elementId][paintParams.targetEndpoint.elementId] == undefined)) {
-        console.log(window.connectorParams[paintParams.sourceEndpoint.elementId][paintParams.targetEndpoint.elementId]);
         var extend = window.connectorParams[paintParams.sourceEndpoint.elementId][paintParams.targetEndpoint.elementId];
       
       _super.addSegment(this, "Straight", {
