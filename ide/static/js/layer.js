@@ -27,7 +27,6 @@ class Layer extends React.Component {
         onMouseEnter={(event) => this.props.hover(event, this.props.id)}
         data-tip='tooltip'
         data-for='getContent'
-        extend={this.props.extend}
       >
         {data[this.props.type].name}
       </div>
@@ -42,8 +41,7 @@ Layer.propTypes = {
   left: React.PropTypes.string.isRequired,
   class: React.PropTypes.string,
   click: React.PropTypes.func,
-  hover: React.PropTypes.func,
-  extend: React.PropTypes.string
+  hover: React.PropTypes.func
 };
 
 export default Layer;

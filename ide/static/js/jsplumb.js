@@ -22,9 +22,9 @@ export default function () {
         y2:paintInfo.ty
       })
     } else {
-      if (window.connectorParams[paintParams.sourceEndpoint.elementId][paintParams.targetEndpoint.elementId] != 0 && !(window.connectorParams[paintParams.sourceEndpoint.elementId][paintParams.targetEndpoint.elementId] == undefined)) {
+      if (!(window.connectorParams == undefined) && !(window.connectorParams[paintParams.sourceEndpoint.elementId][paintParams.targetEndpoint.elementId] == undefined) && window.connectorParams[paintParams.sourceEndpoint.elementId][paintParams.targetEndpoint.elementId] != 0) {
         var extend = window.connectorParams[paintParams.sourceEndpoint.elementId][paintParams.targetEndpoint.elementId];
-      
+       
       _super.addSegment(this, "Straight", {
         x1:paintInfo.sx,
         y1:paintInfo.sy,
@@ -44,7 +44,7 @@ export default function () {
         y2:paintInfo.ty
       });
      }
-    else {
+    else { 
       _super.addSegment(this, "Straight", {
         x1:paintInfo.sx,
         y1:paintInfo.sy,
