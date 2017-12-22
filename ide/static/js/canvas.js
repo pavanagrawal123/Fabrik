@@ -11,6 +11,7 @@ class Canvas extends React.Component {
     super(props);
     this.allowDrop = this.allowDrop.bind(this);
     this.drop = this.drop.bind(this);
+    this.scrollCanvas = this.scrollCanvas.bind(this);
     this.clickCanvas = this.clickCanvas.bind(this);
     this.clickLayerEvent = this.clickLayerEvent.bind(this);
     this.hoverLayerEvent = this.hoverLayerEvent.bind(this);
@@ -35,8 +36,8 @@ class Canvas extends React.Component {
         grid: [8, 8]
       }
     );
+    const net = this.props.net;    
     if (this.props.rebuildNet) {
-      const net = this.props.net;
       let combined_layers = ['ReLU', 'LRN', 'TanH', 'BatchNorm', 'Dropout', 'Scale'];
       Object.keys(net).forEach(inputId => {
         const layer = net[inputId];
@@ -70,6 +71,39 @@ class Canvas extends React.Component {
       this.props.changeNetStatus(false);
       // instance.repaintEverything();
     }
+    // Might need to improve the logic of clickEvent
+    if(Object.keys(net).length>1 && this.props.clickEvent){
+      for (let i = this.props.nextLayerId - 1; i >= 0; i --) { //find last layer id
+        if (net[`l${i}`] !== undefined) {
+          var lastLayerId = i;
+          break;
+        }
+      }
+      for (let i = lastLayerId - 1; i >= 0; i --) { //find second last layer id
+        if (net[`l${i}`] !== undefined) {
+          var prevLayerId = i;
+          break;
+        }
+      }
+      lastLayerId = `l${lastLayerId}`; //add 'l' ahead of the index
+      prevLayerId = `l${prevLayerId}`;
+      const x1 = parseInt(net[prevLayerId].state.top.split('px'));
+      const x2 = parseInt(net[lastLayerId].state.top.split('px')); 
+      const s = instance.getEndpoints(prevLayerId)[0];
+      var t = instance.getEndpoints(lastLayerId);
+      // To handle case of loss layer being target
+      if (t.length == 1){
+        t = t[0];
+      }
+      else{
+        t = t[1];
+      }
+      if (x2-x1==80) { //since only layers added through handleClick will be exactly 80px apart, we can connect those like this.
+        instance.connect({
+          source: s,
+          target: t});
+      }
+    }
   }
   allowDrop(event) {
     event.preventDefault();
@@ -89,6 +123,9 @@ class Canvas extends React.Component {
       this.hover = 0;
     }
     event.stopPropagation();
+  }
+  scrollCanvas() {
+    $('#netName').css('top', '-' + $('#panZoomContainer').scrollTop() + 'px');
   }
   clickCanvas(event) {
     this.placeholder = false;
@@ -181,8 +218,8 @@ class Canvas extends React.Component {
 
       layer.info = { type, phase };
       layer.state = {
-        top: `${(event.clientY - event.target.getBoundingClientRect().top - canvas.y)/zoom - 25}px`,
-        left: `${(event.clientX - event.target.getBoundingClientRect().left - canvas.x)/zoom - 45}px`,
+        top: `${(event.clientY - event.target.getBoundingClientRect().top - canvas.y + $('#panZoomContainer').scrollTop())/zoom - 25}px`,
+        left: `${(event.clientX - event.target.getBoundingClientRect().left - canvas.x + $('#panZoomContainer').scrollLeft())/zoom - 45}px`,
         class: ''
       };
       // 25px difference between layerTop and dropping point
@@ -270,6 +307,7 @@ class Canvas extends React.Component {
         onDragOver={this.allowDrop}
         onDrop={this.drop}
         onClick={this.clickCanvas}
+        onScroll={this.scrollCanvas}
       >
         {errors}
         {placeholder}
@@ -280,6 +318,12 @@ class Canvas extends React.Component {
         data-y="0"
       >
         {layers}
+      </div>
+      <div id='modelParameter'>
+        <p>Total Parameters</p>
+        <div id="content">
+          {this.props.totalParameters}
+        </div>
       </div>
       <div id='icon-plus' className="canvas-icon">
         <p>Press ]</p>
@@ -301,7 +345,7 @@ class Canvas extends React.Component {
 Canvas.propTypes = {
   nextLayerId: React.PropTypes.number,
   selectedPhase: React.PropTypes.number,
-  net: React.PropTypes.object,
+  net: React.PropTypes.object.isRequired,
   modifyLayer: React.PropTypes.func,
   addNewLayer: React.PropTypes.func,
   changeSelectedLayer: React.PropTypes.func,
@@ -311,7 +355,9 @@ Canvas.propTypes = {
   addError: React.PropTypes.func,
   dismissError: React.PropTypes.func,
   error: React.PropTypes.array,
-  placeholder: React.PropTypes.bool
+  placeholder: React.PropTypes.bool,
+  clickEvent: React.PropTypes.bool,
+  totalParameters: React.PropTypes.number
 };
 
 export default Canvas;

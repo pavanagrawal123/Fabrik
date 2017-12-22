@@ -8,6 +8,8 @@ import Tabs from './tabs';
 import data from './data';
 import netLayout from './netLayout_vertical';
 import Modal from 'react-modal';
+import ModelZoo from './modelZoo';
+import $ from 'jquery'
 
 const infoStyle = {
   content : {
@@ -29,7 +31,7 @@ class Content extends React.Component {
     super(props);
     this.state = {
       net: {},
-      net_name: null,
+      net_name: 'Untitled',
       selectedLayer: null,
       hoveredLayer: null,
       nextLayerId: 0,
@@ -37,13 +39,15 @@ class Content extends React.Component {
       selectedPhase: 0,
       error: [],
       load: false,
-      modalIsOpen: false
+      modalIsOpen: false,
+      totalParameters: 0
     };
     this.addNewLayer = this.addNewLayer.bind(this);
     this.changeSelectedLayer = this.changeSelectedLayer.bind(this);
     this.changeHoveredLayer = this.changeHoveredLayer.bind(this);
     this.componentWillMount = this.componentWillMount.bind(this);
     this.modifyLayer = this.modifyLayer.bind(this);
+    this.changeNetName = this.changeNetName.bind(this);
     this.adjustParameters = this.adjustParameters.bind(this);
     this.modifyLayerParams = this.modifyLayerParams.bind(this);
     this.deleteLayer = this.deleteLayer.bind(this);
@@ -62,8 +66,15 @@ class Content extends React.Component {
     this.loadDb = this.loadDb.bind(this);
     this.infoModal = this.infoModal.bind(this);
     this.toggleSidebar = this.toggleSidebar.bind(this);
+    this.zooModal = this.zooModal.bind(this);
+    this.loadLayerShapes = this.loadLayerShapes.bind(this);
+    this.calculateParameters = this.calculateParameters.bind(this);
+    this.updateParameters = this.updateParameters.bind(this);
     this.modalContent = null;
     this.modalHeader = null;
+    // Might need to improve the logic of clickEvent
+    this.clickEvent = false;
+    this.handleClick = this.handleClick.bind(this);
   }
   openModal() {
     this.setState({modalIsOpen: true});
@@ -170,6 +181,9 @@ class Content extends React.Component {
     const net = this.state.net;
     const input = net[layerId].connection.input;
     const output = net[layerId].connection.output;
+    const layerIdNum = parseInt(layerId.substring(1,layerId.length)); //numeric value of the layerId
+    const nextLayerId = this.state.nextLayerId - 1 == layerIdNum ? layerIdNum : this.state.nextLayerId; 
+       //if last layer was deleted nextLayerId is replaced by deleted layer's id
     let index;
     delete net[layerId];
     input.forEach(inputId => {
@@ -180,19 +194,105 @@ class Content extends React.Component {
       index = net[outputId].connection.input.indexOf(layerId);
       net[outputId].connection.input.splice(index, 1);
     });
-    this.setState({ net, selectedLayer: null });
+    this.setState({ net, selectedLayer: null, nextLayerId: nextLayerId });
+  }
+  updateParameters(layer, net) {
+    // obtain the total parameters of the model
+    var totalParameters = this.state.totalParameters;
+    var weight_params = 0;
+    var bias_params = 0;
+
+    var filter_layers = ["Convolution", "Deconvolution"];
+    var fc_layers = ["InnerProduct", "Embed", "Recurrent", "LSTM"];
+
+    if(filter_layers.includes(layer.info.type)) {
+      // if layer is Conv or DeConv calculating total parameter of the layer using:
+      // N_Input * K_H * K_W * N_Output 
+      var kernel_params = 1;
+      if(layer.params['kernel_h'][0] != '')
+        kernel_params *= layer.params['kernel_h'][0];
+      if(layer.params['kernel_w'][0] != '')
+        kernel_params *= layer.params['kernel_w'][0];
+      if(layer.params['kernel_d'][0] != '')
+        kernel_params *= layer.params['kernel_d'][0];
+
+      weight_params = layer.shape['input'][0] * kernel_params * layer.params['num_output'][0];
+      bias_params += layer.params['num_output'][0];
+    }
+    else if(fc_layers.includes(layer.info.type)) {
+      // if layer is one of Recurrent layer or Fully Connected layers calculate parameters using:
+      // Num_Input * Num_Ouput
+      // if previous layer is D-dimensional then obtain the total inputs by (N1xN2x...xNd)
+      var inputParams = 1;
+      for(var i=0;i<layer.shape['input'].length;i++) {
+        if(layer.shape['input'][i] != 0)
+          inputParams *= layer.shape['input'][i];
+      }
+      weight_params = inputParams * layer.params['num_output'][0];
+      bias_params = layer.params['num_output'][0];
+    }
+    if(layer.info.type == "BatchNorm") {
+      let cnt = 2;
+      const childLayer = net[layer.connection['output'][0]];
+      if(childLayer.info.type == "Scale") {
+        if(childLayer.params['scale'][0] == true)
+          cnt +=1
+        if(childLayer.params['bias_term'][0] == true)
+          cnt +=1;
+      }
+      weight_params = cnt * layer.shape['output'][0];
+    }
+    if('use_bias' in layer.params) {
+      if (layer.params['use_bias'][0] == false)
+        bias_params = 0;
+    }
+    totalParameters += (weight_params + bias_params);
+
+    // Update the total parameters of model after considering this layer.
+    this.setState({ totalParameters: totalParameters });
+  }
+  calculateParameters(net) {
+    // Iterate over model's each layer & separately add the contribution of each layer
+    Object.keys(net).sort().forEach(layerId => {
+      const layer = net[layerId];
+      this.updateParameters(layer, net);
+    });
+  }
+  loadLayerShapes() {
+    this.dismissAllErrors();
+    
+    // Making call to endpoint inorder to obtain shape of each layer i.e. input & output shape
+    const netData = JSON.parse(JSON.stringify(this.state.net));
+    $.ajax({
+      url: 'model_parameter/',
+      dataType: 'json',
+      type: 'POST',
+      data: {
+        net: JSON.stringify(netData)
+      },
+      success : function (response) {
+        const net = response.net;
+        // call to intermediate method which will iterate over layers & calculate the parameters separately
+        this.calculateParameters(net);
+        // update the net object with shape attributes added
+        this.setState({ net });  
+      }.bind(this),
+      error() {
+        //console.log('error'+response.error);
+      }
+    });
   }
   exportNet(framework) {
     this.dismissAllErrors();
     const error = [];
-    const net = this.state.net;
+    const netObj = JSON.parse(JSON.stringify(this.state.net));
 
-    Object.keys(net).forEach(layerId => {
-      const layer = net[layerId];
+    Object.keys(netObj).forEach(layerId => {
+      const layer = netObj[layerId];
       Object.keys(layer.params).forEach(param => {
         layer.params[param] = layer.params[param][0];
         const paramData = data[layer.info.type].params[param];
-        if (layer.info.type == 'Python' && param == 'endPoint'){
+        if (layer.info.type == 'Python' || param == 'endPoint'){
           return;
         }
         if (paramData.required === true && layer.params[param] === '') {
@@ -204,7 +304,7 @@ class Content extends React.Component {
     if (error.length) {
       this.setState({ error });
     } else {
-      const netData = JSON.parse(JSON.stringify(this.state.net));
+      const netData = netObj;
       Object.keys(netData).forEach(layerId => {
         delete netData[layerId].state;
       });
@@ -239,6 +339,8 @@ class Content extends React.Component {
   }
   importNet(framework, id) {
     this.dismissAllErrors();
+    this.closeModal();
+    this.clickEvent = false;
     const url = {'caffe': '/caffe/import', 'keras': '/keras/import', 'tensorflow': '/tensorflow/import'};
     const formData = new FormData();
     const caffe_fillers = ['constant', 'gaussian', 'positive_unitball', 'uniform', 'xavier', 'msra', 'bilinear'];
@@ -285,6 +387,7 @@ class Content extends React.Component {
       success: function (response) {
         if (response.result === 'success'){
           this.initialiseImportedNet(response.net,response.net_name);
+          this.loadLayerShapes();
         } else if (response.result === 'error'){
           this.addError(response.error);
         }
@@ -323,7 +426,7 @@ class Content extends React.Component {
         Object.keys(data[type].params).forEach(param => {
           if (!layer.params.hasOwnProperty(param)) {
             // The initial value is a list with the first element being the actual value, and the second being a flag which
-            // controls wheter the parameter is disabled or not on the frontend.
+            // controls whether the parameter is disabled or not on the frontend.
             layer.params[param] = [data[type].params[param].value, false];
           }
           else {
@@ -433,9 +536,13 @@ class Content extends React.Component {
         nextLayerId: Object.keys(net).length,
         rebuildNet: true,
         selectedPhase: 0,
-        error: []
+        error: [],
+        totalParameters: 0
       });
     }
+  }
+  changeNetName(event) {
+    this.setState({net_name: event.target.value});
   }
   adjustParameters(layer, para, value) {
     if (para == 'layer_type'){
@@ -672,6 +779,78 @@ class Content extends React.Component {
     $('#sidebar').toggleClass('visible');
     $('.sidebar-button').toggleClass('close');
   }
+  zooModal() {
+    this.modalHeader = null;
+    this.modalContent = <ModelZoo importNet={this.importNet}/>;
+    this.openModal();
+  }
+  
+  handleClick(event) {
+    event.preventDefault();
+    this.clickEvent = true;
+
+    const net = this.state.net;
+    const id = event.target.id;
+    const prev = net[`l${this.state.nextLayerId-1}`];
+    const next = data[id];
+    const zoom = instance.getZoom();    
+    const layer = {};
+    let phase = this.state.selectedPhase;
+    
+    if (this.state.nextLayerId>0 //makes sure that there are other layers 
+      &&data[prev.info.type].endpoint.src == "Bottom" //makes sure that the source has a bottom
+      &&next.endpoint.trg == "Top") { //makes sure that the target has a top
+        layer.connection = { input: [], output: [] };
+        layer.info = {
+          type: id.toString(),
+          phase,
+          class: ''
+        }
+        layer.params = {
+          'endPoint' : [next['endpoint'], false] //This key is endpoint in data.js, but endPoint in everywhere else.
+        }          
+        Object.keys(next.params).forEach(j => {
+          layer.params[j] = [next.params[j].value, false]; //copys all params from data.js
+        });    
+        layer.props = JSON.parse(JSON.stringify(next.props)) //copys all props rom data.js
+        layer.state = {
+          top: `${(parseInt(prev.state.top.split('px')[0])/zoom + 80)}px`, // This makes the new layer is exactly 80px under the previous one.
+          left: `${(parseInt(prev.state.left.split('px')[0])/zoom)}px`, // This aligns the new layer with the previous one.
+          class: '' 
+        }
+        layer.props.name = `${next.name}${this.state.nextLayerId}`;          
+        prev.connection.output.push(`l${this.state.nextLayerId}`);
+        layer.connection.input.push(`l${this.state.nextLayerId-1}`);
+        this.addNewLayer(layer);
+    }
+
+    else if (Object.keys(net).length == 0) { // if there are no layers
+      layer.connection = { input: [], output: [] };
+      layer.info = {
+            type: id.toString(),
+            phase,
+            class: ''
+          }
+      layer.params = {
+        'endPoint' : [next['endpoint'], false] //This key is endpoint in data.js, but endPoint in everywhere else.
+      }          
+      Object.keys(next.params).forEach(j => {
+        layer.params[j] = [next.params[j].value, false];  //copys all params from data.js
+      });    
+      layer.props = JSON.parse(JSON.stringify(next.props)) //copys all props from data.js
+      const height = Math.round(0.05*window.innerHeight, 0); // 5% of screen height, rounded to zero decimals
+      const width = Math.round(0.35*window.innerWidth, 0); // 35% of screen width, rounded to zero decimals
+      var top = height + Math.ceil(81-height);
+      var left = width;
+      layer.state = {
+            top: `${top}px`,
+            left: `${left}px`,
+            class: '' 
+          }
+      layer.props.name = `${next.name}${this.state.nextLayerId}`;          
+      this.addNewLayer(layer); 
+    }
+  }
   render() {
     let loader = null;
     if (this.state.load) {
@@ -692,9 +871,12 @@ class Content extends React.Component {
               exportNet={this.exportNet}
               importNet={this.importNet}
               saveDb={this.saveDb}
+              zooModal={this.zooModal}
              />
              <h5 className="sidebar-heading">INSERT LAYER</h5>
-             <Pane />
+             <Pane 
+             handleClick = {this.handleClick}
+             />
              <div className="text-center">
               <Tabs selectedPhase={this.state.selectedPhase} changeNetPhase={this.changeNetPhase} />
              </div>
@@ -705,6 +887,14 @@ class Content extends React.Component {
           </div>
         </div>
       <div id="main">
+          <input type="text" 
+            className={$.isEmptyObject(this.state.net) ? "hidden": ""}
+            id="netName" 
+            placeholder="Net name" 
+            value={this.state.net_name} 
+            onChange={this.changeNetName} 
+            spellCheck="false"
+          />
           {loader}
           <Canvas
             net={this.state.net}
@@ -719,6 +909,8 @@ class Content extends React.Component {
             error={this.state.error}
             dismissError={this.dismissError}
             addError={this.addError}
+            clickEvent={this.clickEvent}
+            totalParameters={this.state.totalParameters}
           />
           <SetParams
             net={this.state.net}
