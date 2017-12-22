@@ -97,8 +97,8 @@ class Canvas extends React.Component {
             var direction = this.checkIfCuttingLine(net,pos);
             while(this.checkIfCuttingLine(net,pos) != 0) {
               extend += 80*direction;
-              pos[0][0] += 80*direction;
-              pos[1][0] += 80*direction;
+              pos[0][0] += 70*direction;
+              pos[1][0] += 70*direction;
             }
           }
           if ((net[outputId].info.phase === this.props.selectedPhase) || (net[outputId].info.phase === null)) {
