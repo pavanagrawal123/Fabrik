@@ -82,6 +82,35 @@ body {
   box-shadow:none ;
   border: none;
   margin: 0px;
+  z-index: auto;
+}
+
+input#netName {
+  border: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  max-width: 30%;
+  margin: auto;
+  text-align: center;
+  font-size: 2.5rem;
+  padding: 1rem;
+  outline: none;
+  z-index: 100;
+  background: transparent;
+  border-bottom: 2px solid;
+  border-color: #cdcfd2;
+}
+
+input#netName:focus {
+  border-color: #cdcfd2;
+}
+
+input#netName.hidden {
+  opacity: 0;
+  pointer-events: none;
 }
 
 .canvas-icon{
@@ -108,6 +137,31 @@ body {
 #icon-plus{
   right: 8%;
 }
+
+#modelParameter{
+  margin: 0px;
+  position: fixed;
+  bottom: 4%;
+  left: 22%;
+  width: 180px;
+}
+
+#modelParameter > p{
+  margin: 0px;
+  color: #9ea2a9;
+}
+
+#modelParameter > #content{
+  width: 100px;
+  height: 30px;
+  border-radius: 5px;
+  text-align: center;
+  background-color: #cdcfd2;
+  box-shadow:none ;
+  border: none;
+  padding: 2px 2px 2px 2px;
+}
+
 
 .extra-buttons{
   padding-left: 0px;
@@ -321,7 +375,7 @@ body {
 }
 
 .dropdown {
-  z-index: 99;
+  z-index: auto;
 }
 
 .drowpdown-button{
@@ -501,7 +555,7 @@ body {
     color: white;
     background-color: #f44336;
     border: none;
-    z-index: 22;
+    z-index: 120;
     position: absolute;
     top: 3%;
     left:30%;
@@ -556,7 +610,6 @@ button.close {
     margin-top: 0;
     max-height: 500px;
     min-width: 30px;
-    overflow-y: scroll;
     background-color: #455062;
 }
 

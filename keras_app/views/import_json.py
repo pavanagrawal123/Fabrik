@@ -15,10 +15,7 @@ from keras.models import model_from_json, Sequential
 def import_json(request):
     if request.method == 'POST':
         if ('file' in request.FILES):
-            try:
-                f = request.FILES['file']
-            except Exception:
-                return JsonResponse({'result': 'error', 'error': 'No JSON model file found'})
+            f = request.FILES['file']
         elif 'sample_id' in request.POST:
                 try:
                     f = open(os.path.join(settings.BASE_DIR,
@@ -33,7 +30,6 @@ def import_json(request):
             return JsonResponse({'result': 'error', 'error': 'Invalid JSON'})
 
     model = model_from_json(json.dumps(model))
-
     layer_map = {
         'InputLayer': Input,
         'Dense': Dense,

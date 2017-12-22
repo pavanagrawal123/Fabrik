@@ -43,7 +43,7 @@ export default function () {
         x2:paintInfo.tx,
         y2:paintInfo.ty
       });
-    }
+     }
     else {
       _super.addSegment(this, "Straight", {
         x1:paintInfo.sx,
