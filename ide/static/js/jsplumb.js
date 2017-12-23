@@ -24,7 +24,10 @@ export default function () {
     } else {
       //check to see if the cutting has been specified for this layer
       // the first statement should short circuit on dragging a layer
-      if (!(window.connectorParams == undefined) && !(window.connectorParams[paintParams.sourceEndpoint.elementId][paintParams.targetEndpoint.elementId] == undefined) && window.connectorParams[paintParams.sourceEndpoint.elementId][paintParams.targetEndpoint.elementId] != 0) {
+      if (!(window.connectorParams == undefined) && 
+      !(window.connectorParams[paintParams.sourceEndpoint.elementId] == undefined) &&
+      !(window.connectorParams[paintParams.sourceEndpoint.elementId][paintParams.targetEndpoint.elementId] == undefined) &&
+       window.connectorParams[paintParams.sourceEndpoint.elementId][paintParams.targetEndpoint.elementId] != 0) {
         var extend = window.connectorParams[paintParams.sourceEndpoint.elementId][paintParams.targetEndpoint.elementId];
        
       _super.addSegment(this, "Straight", {
