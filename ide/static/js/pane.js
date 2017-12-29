@@ -26,8 +26,8 @@ class Pane extends React.Component {
       return (
         <div className="panel-group" id="menu" role="tablist" aria-multiselectable="true">
               <div className="panel panel-default">
-                <div href="#data" data-toggle="collapse" aria-expanded="false" aria-controls="data" className="panel-heading" role="tab"  onClick={() => this.toggleClass('data')}>
-                    
+                <div href="#data" data-toggle="collapse" aria-expanded="false" aria-controls="data" 
+                className="panel-heading" role="tab"  onClick={() => this.toggleClass('data')}>
                     <a data-parent="#menu"  >
                     <span className="badge sidebar-badge" id="dataLayers"> </span>
                       Data
@@ -50,8 +50,8 @@ class Pane extends React.Component {
                 </div>
               </div>
               <div className="panel panel-default">
-                <div className="panel-heading" role="tab" data-toggle="collapse"  href="#vision" aria-expanded="false" aria-controls="vision" onClick={() => this.toggleClass('vision')}>
-                    
+                <div className="panel-heading" role="tab" data-toggle="collapse"  href="#vision" 
+                aria-expanded="false" aria-controls="vision" onClick={() => this.toggleClass('vision')}>
                     <a data-parent="#menu">
                     <span className="badge sidebar-badge" id="visionLayers"> </span>
                       Vision
@@ -72,7 +72,8 @@ class Pane extends React.Component {
                 </div>
               </div>
               <div className="panel panel-default">
-                <div className="panel-heading" role="tab" data-toggle="collapse"  href="#recurrent" aria-expanded="false" aria-controls="recurrent" onClick={() => this.toggleClass('recurrent')}>
+                <div className="panel-heading" role="tab" data-toggle="collapse"  href="#recurrent" 
+                aria-expanded="false" aria-controls="recurrent" onClick={() => this.toggleClass('recurrent')}>
                     
                     <a data-parent="#menu" >
                     <span className="badge sidebar-badge" id="recurrentLayers"> </span>
@@ -91,7 +92,8 @@ class Pane extends React.Component {
                 </div>
               </div>
               <div className="panel panel-default">
-                <div className="panel-heading" role="tab" data-toggle="collapse" href="#utility" aria-expanded="false" aria-controls="utility" onClick={() => this.toggleClass('utility')}>
+                <div className="panel-heading" role="tab" data-toggle="collapse" href="#utility" 
+                aria-expanded="false" aria-controls="utility" onClick={() => this.toggleClass('utility')}>
                     
                     <a  data-parent="#menu">
                     <span className="badge sidebar-badge" id="utilityLayers"> </span>
@@ -121,8 +123,8 @@ class Pane extends React.Component {
                 </div>
               </div>
               <div className="panel panel-default">
-                <div data-toggle="collapse"  href="#activation" aria-expanded="false" aria-controls="activation" className="panel-heading" role="tab" onClick={() => this.toggleClass('activation')}>
-                    
+                <div data-toggle="collapse"  href="#activation" aria-expanded="false" aria-controls="activation" 
+                className="panel-heading" role="tab" onClick={() => this.toggleClass('activation')}>
                     <a data-parent="#menu" >
                     <span className="badge sidebar-badge" id="activationLayers"> </span>
                       Activation/Neuron
@@ -154,8 +156,8 @@ class Pane extends React.Component {
                 </div>
               </div>
               <div className="panel panel-default">
-                <div className="panel-heading" role="tab" data-toggle="collapse" href="#normalization" aria-expanded="false" aria-controls="normalization" onClick={() => this.toggleClass('normalization')}>
-                    
+                <div className="panel-heading" role="tab" data-toggle="collapse" href="#normalization" 
+                aria-expanded="false" aria-controls="normalization" onClick={() => this.toggleClass('normalization')}>
                     <a  data-parent="#menu" >
                     <span className="badge sidebar-badge" id="normalizationLayers"> </span>
                       Normalization
@@ -172,8 +174,8 @@ class Pane extends React.Component {
                 </div>
               </div>
               <div className="panel panel-default">
-                <div className="panel-heading" role="tab" data-toggle="collapse"  href="#common" aria-expanded="false" aria-controls="common" onClick={() => this.toggleClass('common')}>
-                    
+                <div className="panel-heading" role="tab" data-toggle="collapse"  href="#common" aria-expanded="false"
+                aria-controls="common" onClick={() => this.toggleClass('common')}>
                     <a data-parent="#menu">
                     <span className="badge sidebar-badge" id="commonLayers"> </span>
                       Common
@@ -190,7 +192,8 @@ class Pane extends React.Component {
                 </div>
               </div>
               <div className="panel panel-default">
-                <div className="panel-heading" role="tab" data-toggle="collapse"  href="#noise" aria-expanded="false" aria-controls="noise" onClick={() => this.toggleClass('noise')}>
+                <div className="panel-heading" role="tab" data-toggle="collapse"  href="#noise" aria-expanded="false" 
+                aria-controls="noise" onClick={() => this.toggleClass('noise')}>
                     
                     <a data-parent="#menu" >
                     <span className="badge sidebar-badge" id="noiseLayers"> </span>
@@ -209,8 +212,8 @@ class Pane extends React.Component {
                 </div>
               </div>
               <div className="panel panel-default">
-                <div className="panel-heading" role="tab" data-toggle="collapse" href="#loss" aria-expanded="false" aria-controls="loss" onClick={() => this.toggleClass('loss')}>
-                    
+                <div className="panel-heading" role="tab" data-toggle="collapse" href="#loss" aria-expanded="false" 
+                aria-controls="loss" onClick={() => this.toggleClass('loss')}>
                     <a  data-parent="#menu">
                     <span className="badge sidebar-badge" id="lossLayers"> </span>
                       Loss
