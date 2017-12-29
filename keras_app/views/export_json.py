@@ -3,7 +3,7 @@ import os
 import random
 import string
 import yaml
-
+import traceback
 from datetime import datetime
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
@@ -140,8 +140,11 @@ def export_json(request):
                         return JsonResponse({'result': 'error', 'error': 'Cannot convert ' +
                                              net[layerId]['info']['type'] + ' to Keras'})
                 else:
-                    net_out.update(layer_map[net[layerId]['info']['type']](
-                        net[layerId], layer_in, layerId))
+                    try:
+                        net_out.update(layer_map[net[layerId]['info']['type']](
+                            net[layerId], layer_in, layerId))
+                    except Exception:
+                        return JsonResponse({'result': 'error', 'error': traceback.format_exc()})
                 for outputId in net[layerId]['connection']['output']:
                     if outputId not in stack:
                         stack.append(outputId)
