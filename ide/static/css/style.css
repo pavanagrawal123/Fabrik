@@ -123,6 +123,7 @@ body {
   border: none;
   background-color: transparent;
   box-shadow: none;
+  cursor: pointer;
 }
 .panel-heading > a {
   text-decoration: none;
