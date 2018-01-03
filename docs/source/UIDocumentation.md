@@ -117,3 +117,18 @@ The ```jsplumb.js``` file contains code that handles the arrangement and the dra
 negative.)
 
 Please refer to the jsplumb documentation here to learn more about this API set. https://jsplumbtoolkit.com/docs.html
+### ```data.js```
+```data.js``` contains various different variables filled with data used throughout the application.
+### ```error.js```
+```error.js``` contains Error React Component with one method:
+* dismissError
+The error is passed in through props and then displayed to the user.
+### ```field.js```
+```field.js``` contains the various different fields used by the layer editor.
+* change
+    * e
+
+The method change is used to change the state of checkboxes, and it is passed in event e. 
+###```modelElement.js``` 
+```modelElement.js``` contains the component that renders out each model in the model zoo. It includes logic that onClick will trigger an importNet, as defined in ```content.js```.
+
