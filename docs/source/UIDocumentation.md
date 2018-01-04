@@ -102,11 +102,15 @@ This algorithmic design creates the possibility of an infinite loop if the canva
 
 ### ```topbar.js```
 ```topbar.js``` has no methods. It is invoked by ```content.js``` to show the top section of the left section. 
+### ```panZoom.js```
+```panZoom.js``` includes the functions that zoom the canvas in and out, based on various invocations.  
 ### ```pane.js```
 ```pane.js``` contains one method:
 * toggleClass
-
+```pane.js``` invokes ```paneElement.js``` to render out each element. 
 toggleClass toggles classes for the dropdown on the sidebar for layer selection. 
+### ```paneElement.js``` 
+```paneElement.js``` renders out each element of the pane, it is invoked by ```pane.js```
 ```pane.js``` renders out all of the layers for selection by the user.
 ### ```tabs.js```
 ```tabs.js``` contains no methods and is used to switch between Train and Test layers. 
@@ -127,8 +131,29 @@ The error is passed in through props and then displayed to the user.
 ```field.js``` contains the various different fields used by the layer editor.
 * change
     * e
-
 The method change is used to change the state of checkboxes, and it is passed in event e. 
-###```modelElement.js``` 
+### ```modelElement.js``` 
 ```modelElement.js``` contains the component that renders out each model in the model zoo. It includes logic that onClick will trigger an importNet, as defined in ```content.js```.
+### ```modelZoo.js```
+```modelZoo.js``` contains the rendering of the modelZoo, it invokes modelElement to render the actual listing of the model.
+### ```netLayout_vertical.js``` and ```netLayout.js```
+Both of these files contain code that determines positioning and layout of net. It is invoked by ```content.js```
+### ```setParams.js```
+Contains the following methods:
+* changeProps
+    * prop
+    * value
+* changeParams
+    * para
+    * value
+* close
+* trainOnly
+    * e
+    
+### ```setParams.js``` 
+allows users to change layer parameters and reads paramters through ```data.js```
+### ```tooltip.js``` and ```tooltipData.js```
+Both of these files contains code for tooltips and the ```tooltipData.js``` contains the actual tooltips that are rendered.
 
+note: tooltips are "hover" messages, they tell more information about something when a user hovers over an object.
+ 
