@@ -93,7 +93,6 @@ class ModelZoo extends React.Component {
               <br></br>
               </div>
             )}
-      </div>
       )
     )
     return (
