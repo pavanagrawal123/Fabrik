@@ -6,32 +6,32 @@ Frontend Design
 (The top most bullet contains the name of the method and the inner bullets are params.)
 * openModal
 * closeModal
-* addNewLayer
+* addNewLayer - invoked by ```handleClick``` and passed in a JS object with layer information. 
   * layer
-* changeSelectedLayer
+* changeSelectedLayer - changes which layer has the selected class on it, which outlines layer to emphasize a "selection"
   * layerId
-* changeHoveredLayer
+* changeHoveredLayer - changes which layer has the hover class on it, which outlines layer to emphasize a "hover"
   * layerId
-* modifyLayer
-  * layer
-  * layerId
-* modifyLayerParams
+* modifyLayer - modifies layer, passed in layer is the new layer, and layer id is the id it needs to be replaced at. 
   * layer
   * layerId
-* deleteLayer
+* modifyLayerParams 
+  * layer
   * layerId
-* updateParameters
+* deleteLayer - deletes layers and removes inputs and outputs for it. 
+  * layerId
+* updateParameters - sums total amount of parameters and updates layer's parameters
   * layer
   * net
-* calculateParameters
+* calculateParameters - loops through net and invokes ```updateParameters```
   * net
 * loadLayerShapes
-* exportNet
+* exportNet - AJAX's to backend and then passes back error/success
   * framework
-* importNet
+* importNet - AJAX's to backend and then passes back error/success
   * framework
   * id
-* initialiseImportedNet
+* initialiseImportedNet - starts prepping layer to be displayed by Fabrik, positions layers
   * net
   * net_name
 * changeNetName
@@ -49,17 +49,17 @@ Frontend Design
 * addError
   * errorText
 * dismissAllErrors
-* copyTrain
+* copyTrain - copy's train net for test
 * trainOnly
 * saveDb
 * loadDb
   * id
-* infoModal
+* infoModal - sets info into state, and then open's modal
 * toggleSidebar
 * zooModal
 * handleClick
   * event
-  
+### ```canvas.js```
 ```content.js``` invokes an instance of ```canvas.js``` that contains the following methods and params:
 * allowDrop
   * event
