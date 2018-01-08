@@ -1,91 +1,91 @@
 Frontend Design 
 =======
-### Architechture
+### Architecture
 ```app.js``` hosts the main app and calls ```content.js```, which loads up the main app. This file contains a few functions:
 ### ```content.js```
 (The top most bullet contains the name of the method and the inner bullets are params.)
-* openModal
-* closeModal
-* addNewLayer - invoked by ```handleClick``` and passed in a JS object with layer information. 
+* ```openModal```
+* ```closeModal```
+* ```addNewLayer``` - invoked by ```handleClick``` and passed in a JS object with layer information. 
   * layer
-* changeSelectedLayer - changes which layer has the selected class on it, which outlines layer to emphasize a "selection"
+* ```changeSelectedLayer``` - changes which layer has the selected class on it, which outlines layer to emphasize a "selection"
   * layerId
-* changeHoveredLayer - changes which layer has the hover class on it, which outlines layer to emphasize a "hover"
+* ```changeHoveredLayer``` - changes which layer has the hover class on it, which outlines layer to emphasize a "hover"
   * layerId
-* modifyLayer - modifies layer, passed in layer is the new layer, and layer id is the id it needs to be replaced at. 
-  * layer
-  * layerId
-* modifyLayerParams 
+* ```modifyLayer``` - modifies layer, passed in layer is the new layer, and layer id is the id it needs to be replaced at. 
   * layer
   * layerId
-* deleteLayer - deletes layers and removes inputs and outputs for it. 
+* ```modifyLayerParams``` - modify layer params based on layer and layerId, invoked by setParams
+  * layer
   * layerId
-* updateParameters - sums total amount of parameters and updates layer's parameters
+* ```deleteLayer``` - deletes layers and removes inputs and outputs for it. 
+  * layerId
+* ```updateParameters``` - sums total amount of parameters and updates layer's parameters
   * layer
   * net
-* calculateParameters - loops through net and invokes ```updateParameters```
+* ```calculateParameters``` - loops through net and invokes ```updateParameters```
   * net
-* loadLayerShapes
-* exportNet - AJAX's to backend and then passes back error/success
+* ```loadLayerShapes``` - AJAXs to backend to model parameters
+* ```exportNet``` - AJAXs to backend and then passes back error/success
   * framework
-* importNet - AJAX's to backend and then passes back error/success
+* ```importNet``` - AJAXs to backend and then passes back error/success
   * framework
   * id
-* initialiseImportedNet - starts prepping layer to be displayed by Fabrik, positions layers
+* ```initialiseImportedNet``` - starts prepping layer to be displayed by Fabrik, positions layers
   * net
   * net_name
-* changeNetName
+* ```changeNetName```
   * event
-* adjustParameters
+* ```adjustParameters```
   * layer
   * para
   * value
-* changeNetStatus
+* ```changeNetStatus```
   * bool
-* changeNetPhase
+* ```changeNetPhase```
   * phase
-* dismissError
+* ```dismissError```
   * errorIndex
-* addError
+* ```addError```
   * errorText
-* dismissAllErrors
-* copyTrain - copy's train net for test
-* trainOnly
-* saveDb
-* loadDb
+* ```dismissAllErrors```
+* ```copyTrai```n - copy's train net for test
+* ```trainOnly```
+* ```saveDb```
+* ```loadDb```
   * id
-* infoModal - sets info into state, and then open's modal
-* toggleSidebar
-* zooModal
-* handleClick
+* ```infoModal``` - sets info into state, and then open's modal
+* ```toggleSidebar```
+* ```zooModal```
+* ```handleClick```
   * event
 ### ```canvas.js```
 ```content.js``` invokes an instance of ```canvas.js``` that contains the following methods and params:
-* allowDrop
+* ```allowDrop```
   * event
-* clickLayerEvent
-  * event
-  * layerId
-* hoverLayerEvent
+* ```clickLayerEvent``` - invoked on a click of a layer, invokes ```setParams.js```
   * event
   * layerId
-* scrollCanvas
-* clickCanvas
+* ```hoverLayerEvent``` - invoked on a hover
   * event
-* updateLayerPosition
+  * layerId
+* ```scrollCanvas```
+* ```clickCanvas```
   * event
-* connectionEvent
+* ```updateLayerPosition``` - changes layers positon based on event
+  * event
+* ```connectionEvent``` - invoked on connection, checks for cyclics and modifies layers.
   * connInfo
   * originalEvent
-* detachConnectionEvent
+* ```detachConnectionEvent``` - modifies layers
   * connInfo
   * originalEvent
-* drop
+* ```drop```
   * event
 ```canvas.js``` also contains the code that decides whether a node's line needs to be rerouted if it is cutting through another node. 
 ### ```canvas.js```'s placement algorithm
 The method it uses is the following:
-checkIfCuttingLine is passed in a positional block that includes x and y coordinates (it assumes a px is at the end of each x and y) for each endpoint of the line it is checking. 
+```checkIfCuttingLine``` is passed in a positional block that includes x and y coordinates (it assumes a px is at the end of each x and y) for each endpoint of the line it is checking. 
 Specifically, it is checking if the line formed with the coordinates in the positional block will cut into any other nodes between them.
 
 checkIfCuttingLine creates then creates an equation from the x and y points by calculating the slope and using point slope form. 
@@ -129,8 +129,9 @@ Please refer to the jsplumb documentation here to learn more about this API set.
 The error is passed in through props and then displayed to the user.
 ### ```field.js```
 ```field.js``` contains the various different fields used by the layer editor.
-* change
+* ```change```
     * e
+
 The method change is used to change the state of checkboxes, and it is passed in event e. 
 ### ```modelElement.js``` 
 ```modelElement.js``` contains the component that renders out each model in the model zoo. It includes logic that onClick will trigger an importNet, as defined in ```content.js```.
@@ -140,14 +141,14 @@ The method change is used to change the state of checkboxes, and it is passed in
 Both of these files contain code that determines positioning and layout of net. It is invoked by ```content.js```
 ### ```setParams.js```
 Contains the following methods:
-* changeProps
+* ```changeProps```
     * prop
     * value
-* changeParams
+* ```changeParams```
     * para
     * value
-* close
-* trainOnly
+* ```close```
+* ```trainOnly```
     * e
     
 ### ```setParams.js``` 
