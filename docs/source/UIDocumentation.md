@@ -34,13 +34,13 @@ Frontend Design
 * ```initialiseImportedNet``` - starts prepping layer to be displayed by Fabrik, positions layers
   * net
   * net_name
-* ```changeNetName```
+* ```changeNetName``` - invoked on the event of net name changed
   * event
-* ```adjustParameters```
+* ```adjustParameters``` - used to adjust layer parameters based on layer, change is passed in. 
   * layer
   * para
   * value
-* ```changeNetStatus```
+* ```changeNetStatus``` - changes boolean for rebuilding. 
   * bool
 * ```changeNetPhase```
   * phase
@@ -49,7 +49,7 @@ Frontend Design
 * ```addError```
   * errorText
 * ```dismissAllErrors```
-* ```copyTrai```n - copy's train net for test
+* ```copyTrain``` - copy's train net for test
 * ```trainOnly```
 * ```saveDb```
 * ```loadDb```
@@ -57,7 +57,7 @@ Frontend Design
 * ```infoModal``` - sets info into state, and then open's modal
 * ```toggleSidebar```
 * ```zooModal```
-* ```handleClick```
+* ```handleClick``` - handles a click based on an event handles connections and adding layers. 
   * event
 ### ```canvas.js```
 ```content.js``` invokes an instance of ```canvas.js``` that contains the following methods and params:
@@ -74,7 +74,7 @@ Frontend Design
   * event
 * ```updateLayerPosition``` - changes layers positon based on event
   * event
-* ```connectionEvent``` - invoked on connection, checks for cyclics and modifies layers.
+* ```connectionEvent``` - invoked on connection, checks for cycles and modifies layers.
   * connInfo
   * originalEvent
 * ```detachConnectionEvent``` - modifies layers
@@ -88,27 +88,27 @@ The method it uses is the following:
 ```checkIfCuttingLine``` is passed in a positional block that includes x and y coordinates (it assumes a px is at the end of each x and y) for each endpoint of the line it is checking. 
 Specifically, it is checking if the line formed with the coordinates in the positional block will cut into any other nodes between them.
 
-checkIfCuttingLine creates then creates an equation from the x and y points by calculating the slope and using point slope form. 
+```checkIfCuttingLine``` creates then creates an equation from the x and y points by calculating the slope and using point slope form. 
 
-After this, it calls getBetween to get the nodes between the x and y coordinates of the created line. 
+After this, it calls ```getBetween``` to get the nodes between the x and y coordinates of the created line. 
 
-The getBetween also serves the purpose of returning which direction in which the majority of the blocks between are. This is purely for performance, otherwise it would be seperated into a seperate function. 
+The ```getBetween``` also serves the purpose of returning which direction in which the majority of the blocks between are. This is purely for performance, otherwise it would be seperated into a seperate function. 
 
-After getBetween returns with the id's of the nodes are between the x and y coordinate pair, check if cutting line loops through them to check whether or not the resultant line will cut through the in between node.
+After ```getBetween``` returns with the id's of the nodes are between the x and y coordinate pair, check if cutting line loops through them to check whether or not the resultant line will cut through the in between node.
 
-If it does, it will return the direction the line needs to be shifted to the parent function, checkIfCuttingNet, to iterate once again 80 pixels to either the left or right (depending on the return.) 
+If it does, it will return the direction the line needs to be shifted to the parent function, ```checkIfCuttingNet```, to iterate once again 80 pixels to either the left or right (depending on the return.) 
 
-This algorithmic design creates the possibility of an infinite loop if the canvas has been completely occupied  and there is no more space remaining. 
+*This algorithmic design creates the possibility of an infinite loop if the canvas has been completely occupied  and there is no more space remaining.*
 
 ### ```topbar.js```
-```topbar.js``` has no methods. It is invoked by ```content.js``` to show the top section of the left section. 
+```topbar.js``` has no methods. It is invoked by ```content.js``` to show the top section of the sidebar. 
 ### ```panZoom.js```
 ```panZoom.js``` includes the functions that zoom the canvas in and out, based on various invocations.  
 ### ```pane.js```
 ```pane.js``` contains one method:
 * toggleClass
 ```pane.js``` invokes ```paneElement.js``` to render out each element. 
-toggleClass toggles classes for the dropdown on the sidebar for layer selection. 
+```toggleClass``` toggles classes for the dropdown on the sidebar for layer selection. 
 ### ```paneElement.js``` 
 ```paneElement.js``` renders out each element of the pane, it is invoked by ```pane.js```
 ```pane.js``` renders out all of the layers for selection by the user.
@@ -117,7 +117,7 @@ toggleClass toggles classes for the dropdown on the sidebar for layer selection.
 ### ```layer.js```
 ```layer.js``` contains no methods. It is invoked by the ```canvas.js``` and it displays the actual layering on the jsplumb container. The position of each layer is set in the state of the layer. 
 ### ```jsplumb.js```
-The ```jsplumb.js``` file contains code that handles the arrangement and the dragging/connecting of the layers. A new custom connector is created. There is an if function to check whether the node it is connecting is needing to be routed through an extension. A global variable stores this information, and the actual calculation is handled in checkIfCuttingNet and checkIfCuttingLine. The global variable contains the amount of pixels it needs to move over, and it will contain direction it needs to go in (based on whether it is positive or 
+The ```jsplumb.js``` file contains code that handles the arrangement and the dragging/connecting of the layers. A new custom connector is created. There is an if function to check whether the node it is connecting is needing to be routed through an extension. A global variable stores this information, and the actual calculation is handled in ```checkIfCuttingNet``` and ```checkIfCuttingLine```. The global variable contains the amount of pixels it needs to move over, and it will contain direction it needs to go in (based on whether it is positive or 
 negative.)
 
 Please refer to the jsplumb documentation here to learn more about this API set. https://jsplumbtoolkit.com/docs.html
