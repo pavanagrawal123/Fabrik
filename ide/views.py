@@ -7,7 +7,6 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from utils.shapes import get_shapes
 
-
 def index(request):
     return render(request, 'index.html')
 
@@ -33,3 +32,4 @@ def calculate_parameter(request):
             return JsonResponse({
                 'result': 'error', 'error': str(sys.exc_info()[1])})
         return JsonResponse({'result': 'success', 'net': net})
+

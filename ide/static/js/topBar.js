@@ -2,11 +2,52 @@ import React from 'react';
 import ReactTooltip from 'react-tooltip';
 
 class TopBar extends React.Component {
+  componentWillMount() {
+    this.setState({ "loginState": "in" })
+    this.checkLogin();
+  }
+  checkLogin() {
+    $.ajax({
+      url: '/backendAPI/checkLogin',
+      type: 'GET',
+      processData: false,  // tell jQuery not to process the data
+      contentType: false,
+      success: function (response) {
+          this.setState({ "loginState": response.result })
+          this.forceUpdate()
+      }.bind(this)
+    });
+  }
+  getButton() {
+    if (this.state.loginState) {
+      return(
+        <button id="topbar-icon" className="btn btn-default dropdown-toggle form-control" data-toggle="dropdown"
+                      onClick={() => window.location="/accounts/logout"} data-tip="Log Out">
+                        <span className="glyphicon glyphicon-log-out" aria-hidden="true"></span>
+        </button>
+      )
+    }
+    else {
+      return(
+        <button id="topbar-icon" className="btn btn-default dropdown-toggle form-control" data-toggle="dropdown"
+                      onClick={() => window.location="/accounts/github/login"} data-tip="Log In">
+                        <span className="glyphicon glyphicon-log-in" aria-hidden="true"></span>
+        </button>
+      )
+    }
+  }
   render() {
     return (
       <div className="topBar">
         <div className="row">
-            <div className="col-md-3">
+            <div className="col-md-2">
+              <div className="form-group">
+                    <div className="dropdown">
+                      {this.getButton()}
+                    </div>
+                </div>
+            </div>
+            <div className="col-md-2">
               <div className="form-group">
                   <div className="dropdown">
                     <button id="topbar-icon" className="btn btn-default dropdown-toggle form-control" data-toggle="dropdown"
@@ -16,7 +57,7 @@ class TopBar extends React.Component {
                   </div>
               </div>
             </div>
-            <div className="col-md-3">
+            <div className="col-md-2">
               <div className="form-group">
                 <div className="dropdown">
                   <button id="topbar-icon" className="btn btn-default dropdown-toggle form-control" data-toggle="dropdown" data-tip="Export">
@@ -30,7 +71,7 @@ class TopBar extends React.Component {
                 </div>
               </div>
             </div>
-            <div className="col-md-3">
+            <div className="col-md-2">
               <div className="form-group">
                 <div className="dropdown">
                   <button id="topbar-icon" className="btn btn-default dropdown-toggle form-control" data-toggle="dropdown" data-tip="Import">
@@ -59,11 +100,11 @@ class TopBar extends React.Component {
                 </div>
               </div>
             </div>
-            <div className="col-md-3">
+            <div className="col-md-2">
               <div className="form-group">
                 <button id="topbar-icon" className="btn btn-default dropdown-toggle form-control" data-toggle="dropdown"
-                onClick={() => this.props.saveDb()} data-tip="Share">
-                    <span className="glyphicon glyphicon-share" aria-hidden="true"></span>
+                onClick={() => this.props.saveDb()} data-tip="Save">
+                    <span className="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>
                 </button>
               </div>
             </div>

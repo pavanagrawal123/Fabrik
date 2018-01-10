@@ -713,7 +713,7 @@ class Content extends React.Component {
         success : function (response) {
           if (response.result == 'success'){
             var url = 'http://fabrik.cloudcv.org/caffe/load?id='+response.id;
-            this.modalHeader = 'Your model url is:';
+            this.modalHeader = 'If you are logged in, your model has been saved to your account. Your model url is:';
             this.modalContent = (<a href={url}>{url}</a>);
             this.openModal();
           } else if (response.result == 'error') {
@@ -742,6 +742,7 @@ class Content extends React.Component {
     }
   }
   loadDb(id) {
+    this.closeModal();
     this.dismissAllErrors();
     const formData = new FormData();
     formData.append('proto_id', id);
@@ -780,7 +781,7 @@ class Content extends React.Component {
   }
   zooModal() {
     this.modalHeader = null;
-    this.modalContent = <ModelZoo importNet={this.importNet}/>;
+    this.modalContent = <ModelZoo importNet={this.importNet} loadDb={this.loadDb} />;
     this.openModal();
   }
   
