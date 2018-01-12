@@ -87,6 +87,7 @@ class Login extends React.Component {
     if(this.state.loginState) {
       return (
         <div>
+        <a href="/accounts/logout"><h5 className="zoo-modal-text">Logout</h5></a>
         <h5 className="zoo-modal-text" onClick={() => this.myModelLook() }>My Models</h5>
         <Modal
             isOpen={this.state.modalIsOpen}
