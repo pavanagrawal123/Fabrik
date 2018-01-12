@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 from django.contrib.auth.models import User
 from django.db import models
-#import json
+# import json
 # Create your models here.
 
 
@@ -22,4 +22,3 @@ class Net(models.Model):
     base_component_id = models.IntegerField()
     props = models.TextField()
     user = models.ForeignKey(User)
-    
