@@ -9,6 +9,7 @@ import data from './data';
 import netLayout from './netLayout_vertical';
 import Modal from 'react-modal';
 import ModelZoo from './modelZoo';
+import Login from './login';
 import $ from 'jquery'
 
 const infoStyle = {
@@ -703,14 +704,18 @@ class Content extends React.Component {
         delete netData[layerId].state;
       });
       this.setState({ load: true });
+      var data = {
+          net: JSON.stringify(netData),
+          net_name: this.state.net_name
+        }
+      if (this.state.modelID) {
+        data.modelID = this.state.modelID
+      }
       $.ajax({
         url: '/caffe/save',
         dataType: 'json',
         type: 'POST',
-        data: {
-          net: JSON.stringify(netData),
-          net_name: this.state.net_name
-        },
+        data: data,
         success : function (response) {
           if (response.result == 'success'){
             var url = 'http://fabrik.cloudcv.org/caffe/load?id='+response.id;
@@ -747,6 +752,7 @@ class Content extends React.Component {
     this.dismissAllErrors();
     const formData = new FormData();
     formData.append('proto_id', id);
+    this.setState({"modelID": id});
     $.ajax({
       url: '/caffe/load',
       dataType: 'json',
@@ -874,6 +880,8 @@ class Content extends React.Component {
               saveDb={this.saveDb}
               zooModal={this.zooModal}
              />
+             <h5 className="sidebar-heading">LOGIN</h5>
+             <Login loadDb={this.loadDb}></Login>
              <h5 className="sidebar-heading">INSERT LAYER</h5>
              <Pane 
              handleClick = {this.handleClick}

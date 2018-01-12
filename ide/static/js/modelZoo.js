@@ -21,7 +21,11 @@ class ModelZoo extends React.Component {
                   key= {el.id}
                   style={{ color: "#848a92" }}
                   className="btn"
-                  onClick={() => this.props.loadDb(el.id)}
+                  onClick={() => {
+                    this.closeModal()
+                    this.props.loadDb(el.id)
+                    
+                  }}
                 >
                   {el.name}
                 </a>
@@ -86,10 +90,7 @@ class ModelZoo extends React.Component {
             <ModelElement importNet={this.props.importNet} framework="keras" id="VQA">VQA</ModelElement>
           </div>
           <div className="zoo-modal-model">
-          <h3 className="zoo-modal-text">MyModels</h3>
-            {
-              this.state.models
-            }
+          
           </div>
         </div>
       </div>

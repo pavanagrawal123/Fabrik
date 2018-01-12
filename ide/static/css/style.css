@@ -833,7 +833,9 @@ input[type="file"] {
     width: 100%;
     z-index: 10;
   }
-
+  .ReactModal__Overlay {
+    z-index: 100;
+  }
   #sidebar {
     width: 240px;
     z-index: 20;

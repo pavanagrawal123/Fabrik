@@ -25,14 +25,19 @@ def save_to_db(request):
         net_name = request.POST.get('net_name')
         if net_name == '':
             net_name = 'Net'
-        try:
-            randomId = datetime.now().strftime('%Y%m%d%H%M%S')+randomword(5)
-            model = ModelExport(name=net_name, id=randomId, network=net, createdOn=datetime.now(),
-                                updatedOn=datetime.now(), user=request.user)
+        if 'modelID' in request.POST:
+            model = ModelExport.objects.get(id=request.POST.get('modelID'))
+            model.network = net
             model.save()
-            return JsonResponse({'result': 'success', 'id': randomId})
-        except:
-            return JsonResponse({'result': 'error', 'error': str(sys.exc_info()[1])})
+        else:
+            try:
+                randomId = datetime.now().strftime('%Y%m%d%H%M%S')+randomword(5)
+                model = ModelExport(name=net_name, id=randomId, network=net, createdOn=datetime.now(),
+                                    updatedOn=datetime.now(), user=request.user)
+                model.save()
+                return JsonResponse({'result': 'success', 'id': randomId})
+            except:
+                return JsonResponse({'result': 'error', 'error': str(sys.exc_info()[1])})
 
 
 @csrf_exempt
