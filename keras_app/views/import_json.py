@@ -13,6 +13,7 @@ from keras.models import model_from_json, Sequential
 
 @csrf_exempt
 def import_json(request):
+    loadFromText = False
     if request.method == 'POST':
         if ('file' in request.FILES):
             f = request.FILES['file']
@@ -24,8 +25,13 @@ def import_json(request):
                 except Exception:
                     return JsonResponse({'result': 'error',
                                          'error': 'No JSON model file found'})
+        elif 'config' in request.POST:
+            loadFromText = True
         try:
-            model = json.load(f)
+            if loadFromText is True:
+                model = json.loads(request.POST['config'])
+            else:
+                model = json.load(f)
         except Exception:
             return JsonResponse({'result': 'error', 'error': 'Invalid JSON'})
 
@@ -127,6 +133,8 @@ def import_json(request):
                 for node in layer.inbound_nodes[0].inbound_layers:
                     net[node.name]['connection']['output'].append(name)
         else:
+            return JsonResponse({'result': 'error',
+                                'error': 'Cannot import layer of '+layer.__class__.__name__+' type'})
             raise Exception('Cannot import layer of '+layer.__class__.__name__+' type')
     # collect names of all zeroPad layers
     zeroPad = []

@@ -4,6 +4,8 @@ from django.conf import settings
 import os
 from caffe.proto import caffe_pb2
 from google.protobuf import text_format
+import tempfile
+import subprocess
 
 
 # ******Data Layers******
@@ -542,9 +544,11 @@ layer_dict = {'Accuracy': Accuracy,
 
 @csrf_exempt
 def import_prototxt(request):
+    prototxtIsText = False
     if request.method == 'POST':
         if ('file' in request.FILES) and \
-           (request.FILES['file'].content_type == 'application/octet-stream'):
+           (request.FILES['file'].content_type == 'application/octet-stream' or
+                request.FILES['file'].content_type == 'text/plain'):
             try:
                 prototxt = request.FILES['file']
             except Exception:
@@ -558,11 +562,32 @@ def import_prototxt(request):
             except Exception:
                 return JsonResponse({'result': 'error',
                                      'error': 'No Prototxt model file found'})
+        elif 'config' in request.POST:
+            prototxt = request.POST['config']
+            prototxtIsText = True
         caffe_net = caffe_pb2.NetParameter()
+
+        # try to convert to new prototxt
         try:
-            text_format.Merge(prototxt.read(), caffe_net)
-        except Exception:
-            return JsonResponse({'result': 'error', 'error': 'Invalid Prototxt'})
+            if prototxtIsText is True:
+                content = prototxt
+            else:
+                content = prototxt.read()
+            tempFile = tempfile.NamedTemporaryFile()
+            tempFile.write(content)
+            tempFile.seek(0)
+            subprocess.call("~/caffe/caffe/build/tools/upgrade_net_proto_text "
+                            + tempFile.name + " " + tempFile.name, shell=True)
+            tempFile.seek(0)
+            content = tempFile.read()
+            tempFile.close()
+        except Exception as ex:
+            return JsonResponse({'result': 'error', 'error': 'Invalid Prototxt\n'+str(ex)})
+
+        try:
+            text_format.Merge(content, caffe_net)
+        except Exception as ex:
+            return JsonResponse({'result': 'error', 'error': 'Invalid Prototxt\n'+str(ex)})
 
         net = {}
         i = 0
@@ -610,7 +635,6 @@ def import_prototxt(request):
                 },
                 'params': params
             }
-
             # this logic was written for a scenario where train and test layers are mixed up
             # But as we know, the only differences between the train and test phase are:
             # 1) input layer with different source in test

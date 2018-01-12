@@ -10,6 +10,7 @@ import netLayout from './netLayout_vertical';
 import Modal from 'react-modal';
 import ModelZoo from './modelZoo';
 import Login from './login';
+import ImportTextbox from './importTextbox';
 import $ from 'jquery'
 
 const infoStyle = {
@@ -33,6 +34,7 @@ class Content extends React.Component {
     this.state = {
       net: {},
       net_name: 'Untitled',
+      draggingLayer: null,
       selectedLayer: null,
       hoveredLayer: null,
       nextLayerId: 0,
@@ -41,13 +43,16 @@ class Content extends React.Component {
       error: [],
       load: false,
       modalIsOpen: false,
-      totalParameters: 0
+      totalParameters: 0,
+      modelConfig: null,
+      modelFramework: 'caffe'
     };
     this.addNewLayer = this.addNewLayer.bind(this);
     this.changeSelectedLayer = this.changeSelectedLayer.bind(this);
     this.changeHoveredLayer = this.changeHoveredLayer.bind(this);
     this.componentWillMount = this.componentWillMount.bind(this);
     this.modifyLayer = this.modifyLayer.bind(this);
+    this.setDraggingLayer = this.setDraggingLayer.bind(this);
     this.changeNetName = this.changeNetName.bind(this);
     this.adjustParameters = this.adjustParameters.bind(this);
     this.modifyLayerParams = this.modifyLayerParams.bind(this);
@@ -68,6 +73,9 @@ class Content extends React.Component {
     this.infoModal = this.infoModal.bind(this);
     this.toggleSidebar = this.toggleSidebar.bind(this);
     this.zooModal = this.zooModal.bind(this);
+    this.textboxModal = this.textboxModal.bind(this);
+    this.setModelConfig = this.setModelConfig.bind(this);
+    this.setModelFramework = this.setModelFramework.bind(this);
     this.loadLayerShapes = this.loadLayerShapes.bind(this);
     this.calculateParameters = this.calculateParameters.bind(this);
     this.updateParameters = this.updateParameters.bind(this);
@@ -332,9 +340,10 @@ class Content extends React.Component {
           }
           this.setState({ load: false });
         }.bind(this),
-        error() {
+        error : function () {
           this.setState({ load: false });
-        }
+          this.addError("Error");
+        }.bind(this)
       });
     }
   }
@@ -354,6 +363,10 @@ class Content extends React.Component {
     else if (framework == 'samplekeras'){
       framework = 'keras'
       formData.append('sample_id', id);
+    }
+    else if (framework == 'input') {
+      framework = this.state.modelFramework;
+      formData.append('config', this.state.modelConfig);
     }
     else
       formData.append('file', $('#inputFile'+framework)[0].files[0]);
@@ -388,23 +401,23 @@ class Content extends React.Component {
       success: function (response) {
         if (response.result === 'success'){
           this.initialiseImportedNet(response.net,response.net_name);
-          this.loadLayerShapes();
+          if (Object.keys(this.state.net).length)
+            this.loadLayerShapes();
         } else if (response.result === 'error'){
           this.addError(response.error);
         }
         this.setState({ load: false });
       }.bind(this),
-      error() {
-        // console.log('failure');
+      error : function () {
         this.setState({ load: false });
-      }
+        this.addError("Error");
+      }.bind(this)
     });
   }
   initialiseImportedNet(net,net_name) {
     // this line will unmount all the layers
     // so that the new imported layers will all be mounted again
     const tempError = {};
-    const error = [];
     // maintaining height & width in integers for use of map in order to
     // reduce the search space for overlapping layers & plotting.
     const height = Math.round(0.05*window.innerHeight, 0);
@@ -446,7 +459,7 @@ class Content extends React.Component {
       }
     });
     // initialize the position of layers
-    let positions = netLayout(net);
+    let positions = tempError.length ? {} : netLayout(net);
     // use map for maintaining top,left coordinates of layers
     // in order to avoid overlapping layers
     let map = {}
@@ -522,10 +535,8 @@ class Content extends React.Component {
     });
 
     if (Object.keys(tempError).length) {
-      Object.keys(tempError).forEach(type => {
-        error.push(`Error: Currently we do not support prototxt with "${type}" Layer.`);
-      });
-      this.setState({ error });
+      const errorLayers = Object.keys(tempError).join(', ');
+      this.setState({ error: [`Error: Currently we do not support these layers: ${errorLayers}.`] });
     } else {
       instance.detachEveryConnection();
       instance.deleteEveryEndpoint();
@@ -541,6 +552,9 @@ class Content extends React.Component {
         totalParameters: 0
       });
     }
+  }
+  setDraggingLayer(id) {
+    this.setState({ draggingLayer: id })
   }
   changeNetName(event) {
     this.setState({net_name: event.target.value});
@@ -791,7 +805,29 @@ class Content extends React.Component {
     this.modalContent = <ModelZoo importNet={this.importNet} />;
     this.openModal();
   }
-  
+  setModelFramework(e) {
+    const el = e.target;
+    const modelFramework = el.dataset.framework;
+    this.setState({modelFramework});
+    $('.import-textbox-tab.selected').removeClass('selected');
+    $(el).addClass('selected');
+  }
+  setModelConfig(e) {
+    const modelConfig = e.target.value;
+    this.setState({modelConfig});
+  }
+  textboxModal() {
+    this.modalHeader = null;
+    this.modalContent = <ImportTextbox
+                          modelConfig={this.state.modelConfig}
+                          modelFramework={this.state.modelFramework}
+                          setModelConfig={this.setModelConfig}
+                          setModelFramework={this.setModelFramework}
+                          importNet={this.importNet}
+                          addError={this.addError}
+                        />;
+    this.openModal();
+  }
   handleClick(event) {
     event.preventDefault();
     this.clickEvent = true;
@@ -872,19 +908,21 @@ class Content extends React.Component {
           <div id="logo_back">
             <a href="http://fabrik.cloudcv.org"><img src={'/static/img/fabrik_t.png'} className="img-responsive" alt="logo" id="logo"/></a>
           </div>
-          <div className="col-md-12">
+          <div id="sidebar-scroll" className="col-md-12">
              <h5 className="sidebar-heading">ACTIONS</h5>
              <TopBar
               exportNet={this.exportNet}
               importNet={this.importNet}
               saveDb={this.saveDb}
               zooModal={this.zooModal}
+              textboxModal={this.textboxModal}
              />
              <h5 className="sidebar-heading">LOGIN</h5>
              <Login loadDb={this.loadDb}></Login>
              <h5 className="sidebar-heading">INSERT LAYER</h5>
              <Pane 
              handleClick = {this.handleClick}
+             setDraggingLayer = {this.setDraggingLayer}
              />
              <div className="text-center">
               <Tabs selectedPhase={this.state.selectedPhase} changeNetPhase={this.changeNetPhase} />
@@ -907,7 +945,6 @@ class Content extends React.Component {
           {loader}
           <Canvas
             net={this.state.net}
-            selectedPhase={this.state.selectedPhase}
             rebuildNet={this.state.rebuildNet}
             addNewLayer={this.addNewLayer}
             nextLayerId={this.state.nextLayerId}
@@ -920,6 +957,9 @@ class Content extends React.Component {
             addError={this.addError}
             clickEvent={this.clickEvent}
             totalParameters={this.state.totalParameters}
+            selectedPhase={this.state.selectedPhase}
+            draggingLayer={this.state.draggingLayer}
+            setDraggingLayer={this.setDraggingLayer}
           />
           <SetParams
             net={this.state.net}
