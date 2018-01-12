@@ -788,7 +788,7 @@ class Content extends React.Component {
   }
   zooModal() {
     this.modalHeader = null;
-    this.modalContent = <ModelZoo importNet={this.importNet} loadDb={this.loadDb} />;
+    this.modalContent = <ModelZoo importNet={this.importNet} />;
     this.openModal();
   }
   

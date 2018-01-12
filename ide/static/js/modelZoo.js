@@ -2,45 +2,6 @@ import React from 'react';
 import ModelElement from './modelElement';
 
 class ModelZoo extends React.Component {
-  constructor(props) {
-    super(props);
-    this.getMyModels = this.getMyModels.bind(this);
-  }
-  getMyModels() {
-      $.ajax({
-        url: '/backendAPI/getModels',
-        type: 'GET',
-        processData: false,  // tell jQuery not to process the data
-        contentType: false,
-        success: function (response) {
-            this.setState({ "myModels": response })
-            var toRet = []
-            this.state.myModels.forEach(function(el) {
-              toRet.push(
-                <a
-                  key= {el.id}
-                  style={{ color: "#848a92" }}
-                  className="btn"
-                  onClick={() => {
-                    this.closeModal()
-                    this.props.loadDb(el.id)
-                    
-                  }}
-                >
-                  {el.name}
-                </a>
-              )
-            }.bind(this))
-            this.setState({"models": toRet})
-            this.forceUpdate()
-        }.bind(this)
-      });
-  }
-  componentWillMount() {
-    this.setState({"models": ""})
-    this.getMyModels()
-    this.forceUpdate()
-  }
   render() {
     return (
       <div className="zoo-modal">
@@ -89,9 +50,6 @@ class ModelZoo extends React.Component {
             <h3 className="zoo-modal-text">VQA</h3>
             <ModelElement importNet={this.props.importNet} framework="keras" id="VQA">VQA</ModelElement>
           </div>
-          <div className="zoo-modal-model">
-          
-          </div>
         </div>
       </div>
     );
@@ -99,8 +57,7 @@ class ModelZoo extends React.Component {
 }
 
 ModelZoo.propTypes = {
-  importNet: React.PropTypes.func,
-  loadDb: React.PropTypes.func
+  importNet: React.PropTypes.func
 };
 
 export default ModelZoo;
