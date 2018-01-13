@@ -718,18 +718,18 @@ class Content extends React.Component {
         delete netData[layerId].state;
       });
       this.setState({ load: true });
-      var data = {
+      var dataToPost = {
           net: JSON.stringify(netData),
           net_name: this.state.net_name
         }
       if (this.state.modelID) {
-        data.modelID = this.state.modelID
+        dataToPost.modelID = this.state.modelID
       }
       $.ajax({
         url: '/caffe/save',
         dataType: 'json',
         type: 'POST',
-        data: data,
+        data: dataToPost,
         success : function (response) {
           if (response.result == 'success'){
             var url = 'http://fabrik.cloudcv.org/caffe/load?id='+response.id;

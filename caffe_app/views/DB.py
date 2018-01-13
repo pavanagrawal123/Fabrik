@@ -28,7 +28,10 @@ def save_to_db(request):
         if 'modelID' in request.POST:
             model = ModelExport.objects.get(id=request.POST.get('modelID'))
             model.network = net
+            model.updatedOn = datetime.now()
+            model.name = net_name
             model.save()
+            return JsonResponse({'result': 'success', 'id': request.POST.get('modelID')})
         else:
             try:
                 randomId = datetime.now().strftime('%Y%m%d%H%M%S')+randomword(5)
