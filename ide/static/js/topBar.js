@@ -2,40 +2,6 @@ import React from 'react';
 import ReactTooltip from 'react-tooltip';
 
 class TopBar extends React.Component {
-  componentWillMount() {
-    this.setState({ "loginState": "in" })
-    this.checkLogin();
-  }
-  checkLogin() {
-    $.ajax({
-      url: '/backendAPI/checkLogin',
-      type: 'GET',
-      processData: false,  // tell jQuery not to process the data
-      contentType: false,
-      success: function (response) {
-          this.setState({ "loginState": response.result })
-          this.forceUpdate()
-      }.bind(this)
-    });
-  }
-  getButton() {
-    if (this.state.loginState) {
-      return(
-        <button id="topbar-icon" className="btn btn-default dropdown-toggle form-control" data-toggle="dropdown"
-                      onClick={() => window.location="/accounts/logout"} data-tip="Log Out">
-                        <span className="glyphicon glyphicon-log-out" aria-hidden="true"></span>
-        </button>
-      )
-    }
-    else {
-      return(
-        <button id="topbar-icon" className="btn btn-default dropdown-toggle form-control" data-toggle="dropdown"
-                      onClick={() => window.location="/accounts/github/login"} data-tip="Log In">
-                        <span className="glyphicon glyphicon-log-in" aria-hidden="true"></span>
-        </button>
-      )
-    }
-  }
   render() {
     return (
       <div className="topBar">

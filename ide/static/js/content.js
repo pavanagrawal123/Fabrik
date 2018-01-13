@@ -723,7 +723,7 @@ class Content extends React.Component {
           net_name: this.state.net_name
         }
       if (this.state.modelID) {
-        dataToPost.modelID = this.state.modelID
+        dataToPost.model_id = this.state.modelID
       }
       $.ajax({
         url: '/caffe/save',
