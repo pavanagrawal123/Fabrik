@@ -37,7 +37,7 @@ def save_to_db(request):
                 randomId = datetime.now().strftime('%Y%m%d%H%M%S')+randomword(5)
                 if request.user.is_authenticated():
                     model = ModelExport(name=net_name, id=randomId, network=net, createdOn=datetime.now(),
-                                        updatedOn=datetime.now(), user=req.user)
+                                        updatedOn=datetime.now(), user=request.user)
                 else:
                     model = ModelExport(name=net_name, id=randomId, network=net, createdOn=datetime.now(),
                                         updatedOn=datetime.now())
