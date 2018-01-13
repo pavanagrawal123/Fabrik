@@ -11,7 +11,7 @@ class ModelExport(models.Model):
     network = JSONField()
     createdOn = models.DateField(auto_now_add=True)
     updatedOn = models.DateField(auto_now_add=True)
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(User, blank=True, null=True)
 
     def __unicode__(self):
         return self.id

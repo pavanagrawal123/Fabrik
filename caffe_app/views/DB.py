@@ -25,7 +25,7 @@ def save_to_db(request):
         net_name = request.POST.get('net_name')
         if net_name == '':
             net_name = 'Net'
-        if 'modelID' in request.POST:
+        if request.POST.get('modelID', 'null') != 'null':
             model = ModelExport.objects.get(id=request.POST.get('modelID'))
             model.network = net
             model.updatedOn = datetime.now()
@@ -35,8 +35,12 @@ def save_to_db(request):
         else:
             try:
                 randomId = datetime.now().strftime('%Y%m%d%H%M%S')+randomword(5)
-                model = ModelExport(name=net_name, id=randomId, network=net, createdOn=datetime.now(),
-                                    updatedOn=datetime.now(), user=request.user)
+                if request.user.is_authenticated():
+                    model = ModelExport(name=net_name, id=randomId, network=net, createdOn=datetime.now(),
+                                        updatedOn=datetime.now(), user=req.user)
+                else:
+                    model = ModelExport(name=net_name, id=randomId, network=net, createdOn=datetime.now(),
+                                        updatedOn=datetime.now())
                 model.save()
                 return JsonResponse({'result': 'success', 'id': randomId})
             except:
