@@ -100,10 +100,12 @@ Authorization callback URL: http://127.0.0.1:8000/accounts/github/login/callback
 7. Login with credentials from step 
 8. Go to ```socialaccounts``` and click new socialapplication.
 9. Choose Github for the application
-10. Name it Github
-11. Copy and paste your client ID and secret into the apppropriate fields.
-12. Click save
-
+10. Name it github
+11. Add the sites available to the right side, so github is allowed for the current site. 
+12. Copy and paste your client ID and secret into the apppropriate fields.
+13. Click save
+Note: For testing, you will only need one authentication backend. However, if you want to try out Google's authentication
+then, you will need to follow the same steps as above, but switch out the Github for google. 
 ### Example
 * Use `example/tensorflow/GoogleNet.pbtxt` for tensorflow import
 * Use `example/caffe/GoogleNet.prototxt` for caffe import
