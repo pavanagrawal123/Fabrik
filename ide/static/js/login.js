@@ -20,8 +20,7 @@ class Login extends React.Component {
           toRet.push(
             <a
               key={el.id}
-              style={{ color: "#848a92" }}
-              className="btn"
+              className="btn my-models-list-item"
               onClick={() => {
                 this.props.loadDb(el.id)
                 this.closeModal()
@@ -58,7 +57,11 @@ class Login extends React.Component {
   myModelLook() {
     {
       this.modalHeader = 'My models:';
-      this.modalContent = (this.state.models);
+      this.modalContent = (
+      <div className="my-models-list-container">
+        {this.state.models}
+      </div>
+    );
       this.openModal();
     }
   }
