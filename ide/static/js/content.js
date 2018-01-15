@@ -348,6 +348,9 @@ class Content extends React.Component {
     }
   }
   importNet(framework, id) {
+    if (String(id).startsWith('sample')) {
+      this.setState({"modelID": ""})
+    }
     this.dismissAllErrors();
     this.closeModal();
     this.clickEvent = false;
@@ -722,7 +725,7 @@ class Content extends React.Component {
           net: JSON.stringify(netData),
           net_name: this.state.net_name
         }
-      if (this.state.modelID) {
+      if (this.state.modelID && this.state.modelID != "") {
         dataToPost.model_id = this.state.modelID
       }
       $.ajax({
