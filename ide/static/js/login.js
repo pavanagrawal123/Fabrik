@@ -6,7 +6,7 @@ class Login extends React.Component {
   constructor(props) {
     super(props);
     this.getMyModels = this.getMyModels.bind(this);
-    this.clModel = this.clModel.bind(this);
+    this.closeModal = this.closeModal.bind(this);
   }
   getMyModels() {
     $.ajax({
@@ -24,7 +24,7 @@ class Login extends React.Component {
               className="btn my-models-list-item"
               onClick={() => {
                 this.props.loadDb(el.id)
-                this.clModel()
+                this.closeModal()
               }}
             >
               {el.name}
@@ -71,7 +71,7 @@ class Login extends React.Component {
   openModal() {
     this.setState({"modalIsOpen": true})
   }
-  clModel() {
+  closeModal() {
     this.setState({"modalIsOpen": false})
   }
   render() {
@@ -97,12 +97,12 @@ class Login extends React.Component {
         <h5 className="zoo-modal-text" onClick={() => this.myModelLook() }>My Models</h5>
         <Modal
             isOpen={this.state.modalIsOpen}
-            onRequestClose={this.clModel}
+            onRequestClose={this.closeModal}
             contentLabel="Modal"
             infoStyle={infoStyle}
             >
             
-            <button type="button" style={{padding: 5+'px'}} className="close" onClick={this.clModel}>&times;</button>
+            <button type="button" style={{padding: 5+'px'}} className="close" onClick={this.closeModal}>&times;</button>
             <h4>{ this.modalHeader }</h4>
             { this.modalContent }
           </Modal>
