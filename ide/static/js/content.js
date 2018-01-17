@@ -348,9 +348,9 @@ class Content extends React.Component {
     }
   }
   importNet(framework, id) {
-    if (String(id).startsWith('sample')) {
+    if (String(framework).startsWith('sample')) {
       this.setState({"modelID": ""})
-    }
+    } 
     this.dismissAllErrors();
     this.closeModal();
     this.clickEvent = false;
@@ -739,6 +739,9 @@ class Content extends React.Component {
             this.modalHeader = 'If you are logged in, your model has been saved to your account. Your model url is:';
             this.modalContent = (<a href={url}>{url}</a>);
             this.openModal();
+            if (response.user) {
+              this.setState({"modelID": response.id})
+            }
           } else if (response.result == 'error') {
             this.addError(response.error);
           }

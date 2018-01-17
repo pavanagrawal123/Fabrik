@@ -6,6 +6,7 @@ class Login extends React.Component {
   constructor(props) {
     super(props);
     this.getMyModels = this.getMyModels.bind(this);
+    this.clModel = this.clModel.bind(this);
   }
   getMyModels() {
     $.ajax({
@@ -23,7 +24,7 @@ class Login extends React.Component {
               className="btn my-models-list-item"
               onClick={() => {
                 this.props.loadDb(el.id)
-                this.closeModal()
+                this.clModel()
               }}
             >
               {el.name}
@@ -37,10 +38,9 @@ class Login extends React.Component {
   }
 
   componentWillMount() {
-    this.setState({ "loginState": "in" })
+    this.setState({ "loginState": false })
     this.setState({"models": ""})
-    this.getMyModels()
-    this.checkLogin();
+    this.checkLogin()
   }
   checkLogin() {
     $.ajax({
@@ -51,6 +51,9 @@ class Login extends React.Component {
       success: function (response) {
           this.setState({ "loginState": response.result })
           this.forceUpdate()
+          if (response.result) {
+            this.getMyModels()
+          }
       }.bind(this)
     });
   }
@@ -68,7 +71,7 @@ class Login extends React.Component {
   openModal() {
     this.setState({"modalIsOpen": true})
   }
-  closeModal() {
+  clModel() {
     this.setState({"modalIsOpen": false})
   }
   render() {
@@ -94,12 +97,12 @@ class Login extends React.Component {
         <h5 className="zoo-modal-text" onClick={() => this.myModelLook() }>My Models</h5>
         <Modal
             isOpen={this.state.modalIsOpen}
-            onRequestClose={this.closeModal}
+            onRequestClose={this.clModel}
             contentLabel="Modal"
             infoStyle={infoStyle}
             >
             
-            <button type="button" style={{padding: 5+'px'}} className="close" onClick={this.closeModal}>&times;</button>
+            <button type="button" style={{padding: 5+'px'}} className="close" onClick={this.clModel}>&times;</button>
             <h4>{ this.modalHeader }</h4>
             { this.modalContent }
           </Modal>
