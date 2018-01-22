@@ -7,15 +7,14 @@ from caffe_app.models import ModelExport
 
 # Create your views here.
 class login(TemplateView):
-    template_name = 'home.html'
+    template_name = 'login.html'
 
 
-def checkLogin(request):
+def check_login(request):
     return JsonResponse({'result': request.user.is_authenticated()})
 
 
-def getModels(request):
+def get_models(request):
     if (request.user.is_authenticated()):
         models = ModelExport.objects.filter(user=request.user).values('name', 'id')
-        #
         return JsonResponse(list(models), safe=False)
