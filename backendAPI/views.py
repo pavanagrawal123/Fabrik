@@ -3,8 +3,6 @@ from __future__ import unicode_literals
 from django.views.generic import TemplateView
 from django.http import JsonResponse
 from caffe_app.models import ModelExport
-# from django.shortcuts import render
-# from django.core import serializers
 
 
 # Create your views here.
